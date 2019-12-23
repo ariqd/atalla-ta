@@ -1,0 +1,94 @@
+@extends('layouts.admint')
+
+@push('css')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/datatables.min.css" />
+@endpush
+
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="{{ asset('assets') }}/js/datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.btnDelete').on('click', function (e) {
+            e.preventDefault();
+            var parent = $(this).parent();
+
+            Swal.fire({
+                    title: "Apa anda yakin?",
+                    text: "Data akan terhapus secara permanen!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then(function (willDelete) {
+                    if (willDelete) {
+                        parent.find('.formDelete').submit();
+                    }
+                });
+        });
+    });
+
+</script>
+@endpush
+
+@section('content')
+<div class="tb-content tb-style1">
+    <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
+        <h2 class="tb-uikits-title">Produk</h2>
+        <a href="{{ url('products/create') }}" class="btn btn-success btn-sm">Tambah</a>
+    </div>
+    <div class="container-fluid">
+        @include('layouts.feedback')
+        <div class="row">
+            <div class="col-12">
+                <div class="tb-card tb-style1">
+                    <div class="tb-card-heading"></div>
+                    <div class="tb-data-table tb-lock-table tb-style1">
+                        <table id="tb-no-locked"
+                            class="table stripe row-border order-column dataTable no-footer table-hover" role="grid"
+                            aria-describedby="tb-no-locked_info">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
+                                        aria-label="No: activate to sort column descending">No</th>
+                                    <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
+                                        aria-label="Nama: activate to sort column descending">Nama</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
+                                        aria-label="Harga: activate to sort column ascending">Harga</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
+                                        aria-label="Kategori: activate to sort column ascending">Kategori</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
+                                        aria-label="Action: activate to sort column ascending">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($products as $product)
+                                <tr role="row">
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $product->code }} - {{ $product->name }}</td>
+                                    <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                                    <td>{{ $product->category }}</td>
+                                    <td>
+                                        <a href="{{ route('products.edit', $product) }}"
+                                            class="text-info mr-3">Edit</a>
+                                        <a href="#" class="text-danger btnDelete">
+                                            Hapus
+                                        </a>
+                                        <form action="{{ route('products.destroy', $product) }}" method="post"
+                                            class="formDelete d-none">
+                                            {!! csrf_field() !!}
+                                            {!! method_field('delete') !!}
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @include('layouts.footer')
+</div>
+@endsection
