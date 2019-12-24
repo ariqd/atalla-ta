@@ -25,7 +25,12 @@
                             </div>
                             <ul class="tb-dropdown tb-style1">
                                 <li>
-                                    <a href="#">Sign Out</a>
+                                    <a href="#" onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">Sign Out</a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                    </form>
                                 </li>
                             </ul>
                         </div>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Counter;
 use App\Customer;
 use App\Helpers\Rajaongkir;
+use App\Purchase;
+use App\Purchase_detail;
 use App\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,13 +15,15 @@ class SalesController extends Controller
 {
     public function index()
     {
-        return view('sales.index');
+        $data['sales'] = Purchase::latest()->get();
+
+        return view('sales.index', $data);
     }
 
     public function create()
     {
         $data['stocks'] = Stock::with('product')->latest()->get();
-        $data['customers'] = Customer::latest()->get();
+        $data['customers'] = Customer::latest()->get()->except(1);
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
         $data['couriers'] = [
@@ -34,7 +38,56 @@ class SalesController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        $data = $request->all();
+
+        $purchase = Purchase::create([
+            'customer_id' => $data['customer_id'],
+            'sales_id' => Auth::id(),
+            'purchase_no' => $data['purchase_no'],
+            'courier_name' => $data['courier_name'],
+            'courier_fee' => $data['service'],
+            'discount' => $data['discount'],
+            'status' => 0,
+            'total' => $data['total']
+        ]);
+
+        if ($purchase) {
+            $counter = Counter::where("name", "=", "SO")->first();
+            $counter->counter += 1;
+            $counter->save();
+
+            foreach ($data['item'] as $key => $value) {
+                Purchase_detail::create([
+                    'purchase_id' => $purchase->id,
+                    'inventory_id' => $value['id'],
+                    'qty' => $value['qty'],
+                    'status' => 0,
+                    'subtotal' => $value['subtotal']
+                ]);
+            }
+
+            return redirect()->back()->with('info', 'Nota penjualan toko berhasil ditambahkan!');
+        } else {
+            return redirect()->back()->with('error', 'Nota penjualan toko gagal ditambahkan!');
+        }
+    }
+
+    public function edit($id)
+    {
+        $data['sale'] = Purchase::with('details.stock.product')->find($id);
+        // dd($data);
+        $data['stocks'] = Stock::with('product')->latest()->get();
+        $data['customers'] = Customer::latest()->get()->except(1);
+        // $counter = Counter::where("name", "=", "SO")->first();
+        // $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
+        $data['couriers'] = [
+            'jne' => 'JNE',
+            'pos' => 'Pos Indonesia',
+            'tiki' => 'TIKI',
+            'Lainnya' => 'Lainnya'
+        ];
+
+        return view('sales.form', $data);
     }
 
     public function search($id)

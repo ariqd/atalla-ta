@@ -3,21 +3,6 @@
 @push('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/datatables.min.css" />
-<style>
-    .loading {
-        background: lightgrey;
-        padding: 15px;
-        position: fixed;
-        border-radius: 4px;
-        left: 50%;
-        top: 50%;
-        text-align: center;
-        margin: -40px 0 0 -50px;
-        z-index: 2000;
-        display: none;
-    }
-
-</style>
 @endpush
 
 @push('js')
@@ -34,7 +19,9 @@
             }
         });
 
+        @if(@!$sale)
         setButtonState();
+        @endif
 
         $('.select2').select2();
 
@@ -192,14 +179,10 @@
 @endpush
 
 @section('content')
-<div class="loading" id="loading">
-    <i class="fas fa-sync fa-spin fa-2x fa-fw"></i><br />
-    <span>Loading</span>
-</div>
 <div class="tb-content tb-style1">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">
-            {{ @$sale ? 'Edit Nota Penjualan: '.$sale->name : 'Nota Penjualan' }}
+            {{ @$sale ? 'Detail / Edit Nota Penjualan' : 'Nota Penjualan' }}
             <small class="text-muted"># {{ @$sale ? $sale->purchase_no : $no_so }}</small>
         </h2>
         <a href="{{ route('sales.index') }}" class="btn btn-outline-info btn-sm">Kembali ke list Nota Penjualan</a>
@@ -214,6 +197,7 @@
                     {{ @$sale ? method_field('PUT') : '' }}
                     <div class="row">
                         <div class="col-8">
+                            @if (@!$sale)
                             <div class="form-group row">
                                 <label for="search" class="col-sm-3 col-form-label">Cari Kode Produk:</label>
                                 <div class="col-sm-9">
@@ -228,6 +212,7 @@
                                     </select>
                                 </div>
                             </div>
+                            @endif
                             <div class="tb-card tb-style1">
                                 <div class="tb-data-table tb-lock-table tb-style1">
                                     <table class="table stripe row-border order-column no-footer table-hover"
@@ -236,25 +221,63 @@
                                             <tr>
                                                 <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Nama: activate to sort column descending"
-                                                    style="width: 40%">Produk</th>
+                                                    style="width: 30%">Produk</th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Kategori: activate to sort column ascending"
                                                     style="width: 10%">Qty (pcs)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Harga: activate to sort column ascending"
-                                                    style="width: 20%">Harga (Rp)
+                                                    style="width: 25%">Harga (Rp)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Total: activate to sort column ascending"
-                                                    style="width: 20%">Total (Rp)
+                                                    style="width: 25%">Total (Rp)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Action: activate to sort column ascending"
                                                     style="width: 10%"></th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody"></tbody>
+                                        <tbody id="tbody">
+                                            @if (@$sale)
+                                            @foreach ($sale->details as $key => $detail)
+                                            <tr id="item-id-{{ $detail->id }}">
+                                                <td style="width: 30%">
+                                                    <b>{{ $detail->stock->product->code }}</b> <br>
+                                                    {{ $detail->stock->product->name }} <br>
+                                                    {{ $detail->stock->color }} - {{ $detail->stock->size }}
+                                                    <input type="hidden" name="item[{{ $key }}][id]"
+                                                        value="{{ $detail->id }}">
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <input type="number" class="form-control" id="qty-{{ $detail->id }}"
+                                                        value="{{ $detail->qty }}" name="item[{{ $key }}][qty]"
+                                                        oninput="countSubtotal({{ $detail->id }})">
+                                                </td>
+                                                <td style="width: 25%">
+                                                    <input type="number" class="form-control"
+                                                        id="price-{{ $detail->id }}"
+                                                        value="{{ $detail->stock->product->price }}"
+                                                        name="item[{{ $key }}][price]"
+                                                        oninput="countSubtotal({{ $detail->id }})">
+                                                </td>
+                                                <td style="width: 25%">
+                                                    <input type="number" class="form-control subtotal"
+                                                        id="subtotal-{{ $detail->id }}" value="{{ $detail->subtotal }}"
+                                                        name="item[{{ $key }}][subtotal]" readonly>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    {{-- <input type="number" class="form-control" 
+                                                        id="qty-{{ $detail->id }}"
+                                                    value="{{ $detail->qty }}"
+                                                    name="item[{{ $key }}][qty]"
+                                                    oninput="countSubtotal({{ $detail->id }})"> --}}
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            @endif
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -276,12 +299,23 @@
                                     <h5>Total:</h5>
                                 </div>
                                 <div class="col-10">
-                                    <h5 class="float-right">Rp <span id="grand-total-span">-</span></h5>
+                                    <h5 class="float-right">Rp
+                                        <span id="grand-total-span">
+                                            {{ @$sale ? number_format($sale->total, 0, ',', '.') : '-' }}
+                                        </span>
+                                    </h5>
                                     <input type="hidden" id="grand-total-input" name="total">
                                 </div>
                             </div>
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
+                            @if (@$sale)
+                            @if ($sale->status == 0)
+                            <a href="#" class="btn btn-block btn-success"><i class="fa fa-check"></i> Pembelian Ini Lunas</a>
+                            @else
+                            <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
+                            @endif
+                            @endif
                         </div>
                     </div>
                 </form>

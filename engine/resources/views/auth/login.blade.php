@@ -55,6 +55,16 @@
                             </span>
                             @enderror
                         </div>
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="rememberMe"
+                                        name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="rememberMe">Remember Me</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="tb-height-b5 tb-height-lg-b5"></div>

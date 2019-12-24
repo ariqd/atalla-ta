@@ -27,7 +27,7 @@
             placeholder: '- Pilih customer -',
             allowClear: true
         });
-        
+
         $('#couriers').select2({
             placeholder: '- Pilih layanan -',
             allowClear: true
@@ -45,15 +45,21 @@
                 $.ajax({
                     url: "{!! url('sales/search-customer') !!}/" + $(this).val(),
                     method: "get",
+                    beforeSend: function () {
+                        $('.loading').show();
+                    },
                     success: function (response) {
+                        $('.loading').hide();
                         if (response.customer.status === 'Distributor') {
                             $("#discount").val(40);
                         } else {
                             $("#discount").val(30);
                         }
                         $("#destination").val(response.customer.city_id);
+                        countTotal();
                     }
                 });
+
             } else {
                 $('#ongkir').addClass('invisible');
                 $('#couriers').prop('disabled', true);
@@ -76,7 +82,11 @@
             $.ajax({
                 url: "{!! url('sales/search') !!}/" + $("#search").val(),
                 method: "get",
+                beforeSend: function () {
+                    $('.loading').show();
+                },
                 success: function (response) {
+                    $('.loading').hide();
                     if (document.getElementById('item-id-' + response.stock.id) == null) {
                         var table = document.getElementById("tbody");
                         var row = table.insertRow();
@@ -101,7 +111,7 @@
                             '<input type="hidden" name="item[' + count + '][id]" value="' +
                             response.stock.id + '">';
                         cell1.innerHTML =
-                            '<input type="number" class="form-control" value="1" name="item[' +
+                            '<input type="number" class="form-control w-75" value="1" name="item[' +
                             count +
                             '][qty]" id="qty-' + response.stock.id +
                             '" oninput="countSubtotal(' +
@@ -186,11 +196,13 @@
                 weight: $('#weight').val(),
                 destination: $('#destination').val(),
             },
+            beforeSend: function () {
+                $('.loading').show();
+            },
             success: function (response) {
-                console.dir(response);
+                $('.loading').hide();
                 var costs = response.rajaongkir.results[0].costs;
                 $('#services').prop('disabled', false);
-                // $("#services").empty().trigger('change');
                 $("#services").select2({
                     placeholder: '- Pilih layanan',
                     allowClear: true,
@@ -214,23 +226,20 @@
     }
 
     function countTotal() {
+        console.log('tot');
         var all_subtotals_length = $('.subtotal').length;
         var grand_subtotal = 0;
 
         for (i = 0; i < all_subtotals_length; i++) {
             grand_subtotal = grand_subtotal + (parseFloat($('.subtotal:eq(' + i + ')').val() || 0));
         }
-        console.log(grand_subtotal);
+
         var discount = parseFloat($("#discount").val() || 0);
         var discount_nominal = discount / 100 * grand_subtotal;
-
         var ongkir = parseFloat($("#services").val() || 0);
+        var grand_total = (grand_subtotal - discount_nominal) + ongkir;
 
-        var grand_total = (grand_subtotal - discount) + ongkir;
-        // this.varGrand = grand_total;
-        // $("#subtotal").val(grand_subtotal);
         $("#grand-total-span").html(number_format(grand_total, 0, ',', '.'));
-        // $("#grand-total-span-input").val(grand_subtotal);
         $("#grand-total-input").val(grand_total);
     }
 
@@ -267,14 +276,13 @@
 <div class="tb-content tb-style1">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">
-            {{ @$sale ? 'Edit Nota Penjualan: '.$sale->name : 'Nota Penjualan' }}
+            {{ @$sale ? 'Detail / Edit Nota Penjualan' : 'Nota Penjualan' }}
             <small class="text-muted"># {{ @$sale ? $sale->purchase_no : $no_so }}</small>
         </h2>
         <a href="{{ route('sales.index') }}" class="btn btn-outline-info btn-sm">Kembali ke list Nota Penjualan</a>
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
-        <div id="ajax-errors"></div>
         <div class="row">
             <div class="col-12">
                 <form action="{{ @$sale ? route('sales.update', $sale) : route('sales.store') }}" method="POST">
@@ -282,6 +290,7 @@
                     {{ @$sale ? method_field('PUT') : '' }}
                     <div class="row">
                         <div class="col-8">
+                            @if (@!$sale)
                             <div class="form-group row">
                                 <label for="search" class="col-sm-3 col-form-label">Cari Kode Produk:</label>
                                 <div class="col-sm-9">
@@ -296,6 +305,7 @@
                                     </select>
                                 </div>
                             </div>
+                            @endif
                             <div class="tb-card tb-style1">
                                 <div class="tb-data-table tb-lock-table tb-style1">
                                     <table class="table stripe row-border order-column no-footer table-hover"
@@ -304,25 +314,63 @@
                                             <tr>
                                                 <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Nama: activate to sort column descending"
-                                                    style="width: 40%">Produk</th>
+                                                    style="width: 30%">Produk</th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Kategori: activate to sort column ascending"
                                                     style="width: 10%">Qty (pcs)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Harga: activate to sort column ascending"
-                                                    style="width: 20%">Harga (Rp)
+                                                    style="width: 25%">Harga (Rp)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Total: activate to sort column ascending"
-                                                    style="width: 20%">Total (Rp)
+                                                    style="width: 25%">Total (Rp)
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Action: activate to sort column ascending"
                                                     style="width: 10%"></th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody"></tbody>
+                                        <tbody id="tbody">
+                                            @if (@$sale)
+                                            @foreach ($sale->details as $key => $detail)
+                                            <tr id="item-id-{{ $detail->id }}">
+                                                <td style="width: 30%">
+                                                    <b>{{ $detail->stock->product->code }}</b> <br>
+                                                    {{ $detail->stock->product->name }} <br>
+                                                    {{ $detail->stock->color }} - {{ $detail->stock->size }}
+                                                    <input type="hidden" name="item[{{ $key }}][id]"
+                                                        value="{{ $detail->id }}">
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <input type="number" class="form-control" id="qty-{{ $detail->id }}"
+                                                        value="{{ $detail->qty }}" name="item[{{ $key }}][qty]"
+                                                        oninput="countSubtotal({{ $detail->id }})">
+                                                </td>
+                                                <td style="width: 25%">
+                                                    <input type="number" class="form-control"
+                                                        id="price-{{ $detail->id }}"
+                                                        value="{{ $detail->stock->product->price }}"
+                                                        name="item[{{ $key }}][price]"
+                                                        oninput="countSubtotal({{ $detail->id }})">
+                                                </td>
+                                                <td style="width: 25%">
+                                                    <input type="number" class="form-control subtotal"
+                                                        id="subtotal-{{ $detail->id }}" value="{{ $detail->subtotal }}"
+                                                        name="item[{{ $key }}][subtotal]" readonly>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    {{-- <input type="number" class="form-control" 
+                                                        id="qty-{{ $detail->id }}"
+                                                    value="{{ $detail->qty }}"
+                                                    name="item[{{ $key }}][qty]"
+                                                    oninput="countSubtotal({{ $detail->id }})"> --}}
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            @endif
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -330,13 +378,12 @@
                         <div class="col-4">
                             <div class="form-group">
                                 <label for="customers">Customer</label>
-                                <select class="form-control" name="customer_id" id="customers">
+                                <select class="form-control" name="customer_id" id="customers"
+                                    {{ @$sale ? 'readonly' : '' }}>
                                     <option></option>
-                                    {{-- <option value="0" selected>Beli di Toko</option>
-                                    <option disabled>─────────────────</option> --}}
                                     @foreach ($customers as $customer)
                                     <option value="{{ $customer->id }}"
-                                        {{ @$sale->customer_id == $customer ? 'selected' : '' }}>
+                                        {{ @$sale->customer_id == $customer->id ? 'selected' : '' }}>
                                         {{ $customer->name }}
                                     </option>
                                     @endforeach
@@ -344,8 +391,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="discount">Diskon (%)</label>
-                                <input type="text" class="form-control" id="discount" name="discount"
-                                    value="{{ @$sale ? $sale->discount : 0 }}">
+                                <input type="number" class="form-control" id="discount" name="discount" min="0"
+                                    value="{{ @$sale ? $sale->discount : 0 }}" oninput="countTotal()">
                             </div>
                             <div class="form-group">
                                 <label for="couriers">Kurir</label>
@@ -360,16 +407,20 @@
                             </div>
                             <div class="form-group">
                                 <label for="services">Layanan</label>
+                                @if (@!$sale)
                                 <select name="service" id="services" class="form-control services w-100" disabled>
                                     <option></option>
                                 </select>
+                                @else
+                                <h5>{{ @$sale->courier_name }}</h5>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="weight">Berat (gram)</label>
                                 <input type="text" class="form-control" id="weight" name="weight"
                                     value="{{ @$sale ? $sale->weight : 1 }}" oninput="calculateCost()">
                             </div>
-                            <div class="row invisible" id="ongkir">
+                            <div class="row {{ @!$sale ? 'invisible' : '' }}" id="ongkir">
                                 <div class="col-6">
                                     <p class="">Ongkos Kirim:</p>
                                 </div>
@@ -377,7 +428,8 @@
                                     <input type="hidden" id="destination" name="destination">
                                     <input type="hidden" class="form-control" id="courier_fee" name="courier_fee"
                                         value="{{ @$sale ? $sale->courier_fee : 0 }}">
-                                    <p class="float-right" id="courier_fee-text">Rp -</p>
+                                    <p class="float-right" id="courier_fee-text">Rp
+                                        {{ @$sale ? number_format($sale->courier_fee, 0, ',', '.') : '' }}</p>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -385,11 +437,20 @@
                                     <h5>Total:</h5>
                                 </div>
                                 <div class="col-10">
-                                    <h5 class="float-right" id="grand-total-span">Rp 1.000.000.000</h5>
-                                    <input type="hidden" id="grand-total-input" name="grand-total-input">
+                                    <h5 class="float-right">Rp <span
+                                            id="grand-total-span">{{ @$sale ? number_format($sale->total, 0, ',', '.') : '-' }}</span>
+                                    </h5>
+                                    <input type="hidden" id="grand-total-input" name="total">
                                 </div>
                             </div>
+                            <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
+                            @if (@$sale)
+                            @if ($sale->status == 0)
+                            <a href="#" class="btn btn-block btn-warning"><i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas </a>
+                            @endif
+                            <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
+                            @endif
                         </div>
                     </div>
                 </form>

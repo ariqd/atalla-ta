@@ -23,11 +23,30 @@
     {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/quill.snow.css" /> --}}
     @stack('css')
     <link id="mode-option" rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/style.css" />
+    <style>
+        .loading {
+            background: lightgrey;
+            padding: 15px;
+            position: fixed;
+            border-radius: 4px;
+            left: 50%;
+            top: 50%;
+            text-align: center;
+            margin: -40px 0 0 -50px;
+            z-index: 2000;
+            display: none;
+        }
+
+    </style>
 </head>
 
 <body>
     @include('layouts.header')
     @include('layouts.sidebar')
+    <div class="loading" id="loading">
+        <i class="fas fa-sync fa-spin fa-2x fa-fw"></i><br />
+        <span>Loading</span>
+    </div>
     @yield('content')
     <!-- Scripts -->
     <script src="{{ asset('assets') }}/js/vendor/modernizr-3.5.0.min.js"></script>

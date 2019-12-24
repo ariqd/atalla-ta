@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Stock;
 use App\Counter;
 use App\Customer;
-use App\Helpers\Rajaongkir;
 use App\Purchase;
 use App\Purchase_detail;
+use App\Helpers\Rajaongkir;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,20 +19,18 @@ class SalesTokoController extends Controller
         $data['customers'] = Customer::latest()->get();
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
-        $data['couriers'] = [
-            'jne' => 'JNE',
-            'pos' => 'Pos Indonesia',
-            'tiki' => 'TIKI',
-            'Lainnya' => 'Lainnya'
-        ];
+        // $data['couriers'] = [
+        //     'jne' => 'JNE',
+        //     'pos' => 'Pos Indonesia',
+        //     'tiki' => 'TIKI',
+        //     'Lainnya' => 'Lainnya'
+        // ];
 
         return view('sales-toko.form', $data);
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $data = $request->all();
 
         $purchase = Purchase::create([
@@ -42,11 +40,15 @@ class SalesTokoController extends Controller
             'courier_name' => '-',
             'courier_fee' => 0,
             'discount' => $data['discount'],
-            'status' => 0,
+            'status' => 1,
             'total' => $data['total']
         ]);
 
         if ($purchase) {
+            $counter = Counter::where("name", "=", "SO")->first();
+            $counter->counter += 1;
+            $counter->save();
+
             foreach ($data['item'] as $key => $value) {
                 Purchase_detail::create([
                     'purchase_id' => $purchase->id,
@@ -63,6 +65,29 @@ class SalesTokoController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $data['sale'] = Purchase::with('details.stock.product')->find($id);
+        // dd($data);
+        // $data['stocks'] = Stock::with('product')->latest()->get();
+        $data['customers'] = Customer::latest()->get();
+        // $counter = Counter::where("name", "=", "SO")->first();
+        // $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
+        // $data['couriers'] = [
+        //     'jne' => 'JNE',
+        //     'pos' => 'Pos Indonesia',
+        //     'tiki' => 'TIKI',
+        //     'Lainnya' => 'Lainnya'
+        // ];
+
+        return view('sales-toko.form', $data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        dd($request->all());
+    }
+
     public function search($id)
     {
         $data['stock'] = Stock::with('product')->find($id);
@@ -70,12 +95,13 @@ class SalesTokoController extends Controller
         return response()->json($data, 200);
     }
 
-    public function searchCustomer($id)
-    {
-        $data['customer'] = Customer::find($id);
 
-        return response()->json($data, 200);
-    }
+    // public function searchCustomer($id)
+    // {
+    //     $data['customer'] = Customer::find($id);
+
+    //     return response()->json($data, 200);
+    // }
 
     public function cost(Request $request)
     {
@@ -91,8 +117,6 @@ class SalesTokoController extends Controller
         $rajaongkir = new Rajaongkir;
         $cost = $rajaongkir->post('cost', $postFields);
         $data = json_decode($cost->getBody());
-        // $data['courier'] = request()->get('courier');
-        // $data['weight'] = request()->get('weight');
 
         return response()->json($data, 200);
     }
