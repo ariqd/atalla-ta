@@ -3,6 +3,11 @@
 @push('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/datatables.min.css" />
+<style>
+.no-underline, .no-underline:hover {
+    text-decoration: none!important;
+}
+</style>
 @endpush
 
 @push('js')
@@ -283,6 +288,22 @@
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
+        @if (@$sale && @$sale->status == 0)
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="tb-alert tb-danger">
+                    <div class="d-flex justify-content-between">
+                        <div class="py-1">
+                            <i class="fa fa-exclamation-circle"></i> Customer belum melunasi pembelian.
+                        </div>
+                        <div>
+                            <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-info btn-sm m-0 no-underline"><i class="fa fa-check"></i> LUNAS</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="row">
             <div class="col-12">
                 <form action="{{ @$sale ? route('sales.update', $sale) : route('sales.store') }}" method="POST">
@@ -447,7 +468,8 @@
                             <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @if (@$sale)
                             @if ($sale->status == 0)
-                            <a href="#" class="btn btn-block btn-warning"><i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas </a>
+                            <a href="#" class="btn btn-block btn-warning"><i class="fa fa-check"></i> Ubah Status
+                                Pembelian ke Lunas </a>
                             @endif
                             <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
                             @endif

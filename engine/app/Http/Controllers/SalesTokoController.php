@@ -50,13 +50,28 @@ class SalesTokoController extends Controller
             $counter->save();
 
             foreach ($data['item'] as $key => $value) {
-                Purchase_detail::create([
+                $detail = Purchase_detail::create([
                     'purchase_id' => $purchase->id,
                     'inventory_id' => $value['id'],
                     'qty' => $value['qty'],
                     'status' => 0,
                     'subtotal' => $value['subtotal']
                 ]);
+
+                $stock = Stock::find($detail->inventory_id);
+
+                // $detail->qty = 40;
+                $stock->qty -= $detail->qty;
+
+                if ($stock->qty < 0) {
+                    $hold = abs($stock->qty - 0);
+                    $stock->qty_hold += $hold;
+                    $stock->qty = 0;
+
+                    $detail->status = 2;
+                    $detail->save();
+                }
+                $stock->save();
             }
 
             return redirect()->back()->with('info', 'Nota penjualan toko berhasil ditambahkan!');

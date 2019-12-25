@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Counter;
 use App\Customer;
 use App\Helpers\Rajaongkir;
+use App\Product;
 use App\Purchase;
 use App\Purchase_detail;
 use App\Stock;
@@ -122,5 +123,31 @@ class SalesController extends Controller
         // $data['weight'] = request()->get('weight');
 
         return response()->json($data, 200);
+    }
+    public function makeLunas($id)
+    {
+        $sale = Purchase::find($id);
+        $sale->status = 1;
+        $sale->save();
+
+        foreach ($sale->details as $detail) {
+            // dump($detail);
+            $stock = Stock::find($detail->inventory_id);
+
+            // $detail->qty = 40;
+            $stock->qty -= $detail->qty;
+
+            if ($stock->qty < 0) {
+                $hold = abs($stock->qty - 0);
+                $stock->qty_hold += $hold;
+                $stock->qty = 0;
+
+                $detail->status = 2;
+                $detail->save();
+            }            
+            $stock->save();
+        }
+
+        return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
     }
 }
