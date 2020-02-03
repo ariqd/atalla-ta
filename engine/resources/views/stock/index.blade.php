@@ -45,7 +45,7 @@
                     <div class="tb-card-heading"></div>
                     <div class="tb-data-table tb-lock-table tb-style1">
                         <table id="tb-no-locked"
-                            class="table stripe row-border order-column dataTable no-footer table-hover" role="grid"
+                            class="table row-border order-column dataTable no-footer table-hover" role="grid"
                             aria-describedby="tb-no-locked_info">
                             <thead>
                                 <tr role="row">
@@ -93,6 +93,6 @@
             </div>
         </div>
     </div>
-    @include('layouts.footer')
+    {{-- @include('layouts.footer') --}}
 </div>
 @endsection
