@@ -35,7 +35,9 @@
 <div class="tb-content tb-style1">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">Produk</h2>
+        @if (Auth::user()->role == 'owner')
         <a href="{{ url('products/create') }}" class="btn btn-success btn-sm">Tambah</a>
+        @endif
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
@@ -44,9 +46,8 @@
                 <div class="tb-card tb-style1">
                     <div class="tb-card-heading"></div>
                     <div class="tb-data-table tb-lock-table tb-style1">
-                        <table id="tb-no-locked"
-                            class="table stripe row-border order-column dataTable no-footer table-hover" role="grid"
-                            aria-describedby="tb-no-locked_info">
+                        <table id="tb-no-locked" class="table row-border order-column dataTable no-footer table-hover"
+                            role="grid" aria-describedby="tb-no-locked_info">
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
@@ -57,8 +58,10 @@
                                         aria-label="Harga: activate to sort column ascending">Harga</th>
                                     <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                         aria-label="Kategori: activate to sort column ascending">Kategori</th>
+                                    @if (Auth::user()->role == 'owner')
                                     <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                         aria-label="Action: activate to sort column ascending">Action</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -68,9 +71,9 @@
                                     <td>{{ $product->code }} - {{ $product->name }}</td>
                                     <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                                     <td>{{ $product->category }}</td>
+                                    @if (Auth::user()->role == 'owner')
                                     <td>
-                                        <a href="{{ route('products.edit', $product) }}"
-                                            class="text-info mr-3">Edit</a>
+                                        <a href="{{ route('products.edit', $product) }}" class="text-info mr-3">Edit</a>
                                         <a href="#" class="text-danger btnDelete">
                                             Hapus
                                         </a>
@@ -80,6 +83,7 @@
                                             {!! method_field('delete') !!}
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -89,6 +93,5 @@
             </div>
         </div>
     </div>
-    @include('layouts.footer')
 </div>
 @endsection

@@ -35,7 +35,9 @@
 <div class="tb-content tb-style1">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">Pembeli</h2>
+        @if (Auth::user()->role == 'owner')
         <a href="{{ url('customers/create') }}" class="btn btn-success btn-sm">Tambah</a>
+        @endif
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
@@ -44,9 +46,8 @@
                 <div class="tb-card tb-style1">
                     <div class="tb-card-heading"></div>
                     <div class="tb-data-table tb-lock-table tb-style1">
-                        <table id="tb-no-locked"
-                            class="table stripe row-border order-column dataTable no-footer table-hover" role="grid"
-                            aria-describedby="tb-no-locked_info">
+                        <table id="tb-no-locked" class="table row-border order-column dataTable no-footer table-hover"
+                            role="grid" aria-describedby="tb-no-locked_info">
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked"
@@ -59,8 +60,10 @@
                                         aria-label="No. Telp: activate to sort column ascending">No. Telp</th>
                                     <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                         aria-label="Status: activate to sort column ascending">Status</th>
+                                    @if (Auth::user()->role == 'owner')
                                     <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                         aria-label="Action: activate to sort column ascending">Action</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -72,6 +75,7 @@
                                         {{ $customer->province_name }}</td>
                                     <td>{{ $customer->phone }}</td>
                                     <td>{{ $customer->status }}</td>
+                                    @if (Auth::user()->role == 'owner')
                                     <td>
                                         <a href="{{ route('customers.edit', $customer) }}"
                                             class="text-info mr-3">Edit</a>
@@ -84,6 +88,7 @@
                                             {!! method_field('delete') !!}
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -93,6 +98,5 @@
             </div>
         </div>
     </div>
-    @include('layouts.footer')
 </div>
 @endsection

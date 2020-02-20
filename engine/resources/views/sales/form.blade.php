@@ -4,9 +4,11 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/datatables.min.css" />
 <style>
-.no-underline, .no-underline:hover {
-    text-decoration: none!important;
-}
+    .no-underline,
+    .no-underline:hover {
+        text-decoration: none !important;
+    }
+
 </style>
 @endpush
 
@@ -96,6 +98,10 @@
                         var table = document.getElementById("tbody");
                         var row = table.insertRow();
                         row.setAttribute('id', 'item-id-' + response.stock.id);
+                        var text_color = 'text-muted';
+
+                        if (response.stock.qty == 0)
+                            text_color = 'text-danger';
 
                         var cell0 = row.insertCell(0);
                         var cell1 = row.insertCell(1);
@@ -122,8 +128,11 @@
                             '" oninput="countSubtotal(' +
                             response.stock.id + ')" placeholder="' + response.stock.qty +
                             '"> ' +
-                            '<small id="helpQty" class="form-text text-muted"> Stok saat ini = ' +
-                            response.stock.qty + ' pcs</small>';
+                            '<small id="helpQty" class="' + text_color +
+                            '"> Stok saat ini = ' +
+                            response.stock.qty + ' pcs</small><br/>' +
+                            '<small id="helpQty" class="text-muted"> Hold qty = ' +
+                            response.stock.qty_hold + ' pcs</small>';
                         cell2.innerHTML =
                             '<input type="number" class="form-control" oninput="countSubtotal(' +
                             response.stock.id + ')" name="item[' + count +
@@ -222,8 +231,7 @@
             error: function (xhr) {
                 $('#ajax-errors').html('');
                 $.each(xhr.responseJSON.errors, function (key, value) {
-                    $('#ajax-errors').append('<div class="alert alert-danger">' + value +
-                        '</div');
+                    $('#ajax-errors').append('<div class="alert alert-danger">' + value + '</div');
                 });
             },
 
@@ -297,7 +305,8 @@
                             <i class="fa fa-exclamation-circle"></i> Customer belum melunasi pembelian.
                         </div>
                         <div>
-                            <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-info btn-sm m-0 no-underline"><i class="fa fa-check"></i> LUNAS</a>
+                            <a href="{{ url('sales/lunas/'.@$sale->id) }}"
+                                class="btn btn-info btn-sm m-0 no-underline"><i class="fa fa-check"></i> LUNAS</a>
                         </div>
                     </div>
                 </div>
@@ -479,6 +488,6 @@
             </div>
         </div>
     </div>
-    @include('layouts.footer')
+
 </div>
 @endsection

@@ -131,14 +131,12 @@ class SalesController extends Controller
         $sale->save();
 
         foreach ($sale->details as $detail) {
-            // dump($detail);
             $stock = Stock::find($detail->inventory_id);
-
-            // $detail->qty = 40;
             $stock->qty -= $detail->qty;
 
             if ($stock->qty < 0) {
                 $hold = abs($stock->qty - 0);
+
                 $stock->qty_hold += $hold;
                 $stock->qty = 0;
 

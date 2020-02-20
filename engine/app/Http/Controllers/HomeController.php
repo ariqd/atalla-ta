@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
 use App\Purchase;
 use App\Stock;
 use Carbon\Carbon;
-
-// use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -39,7 +36,6 @@ class HomeController extends Controller
         }
         $d['products_sold'] = $products_sold;
         $d['needs_restock'] = Stock::where('qty', '<=', 0)->count();
-        // dd($d);
 
         return view('home', $d);
     }
