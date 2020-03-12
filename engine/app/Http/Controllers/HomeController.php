@@ -9,16 +9,6 @@ use Carbon\Carbon;
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -34,6 +24,7 @@ class HomeController extends Controller
         foreach ($purchasesInThisPeriod->get() as $purchases) {
             $products_sold += $purchases->details->sum('qty');
         }
+
         $d['products_sold'] = $products_sold;
         $d['needs_restock'] = Stock::where('qty', '<=', 0)->count();
 

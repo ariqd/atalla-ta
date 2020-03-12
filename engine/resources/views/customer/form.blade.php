@@ -35,7 +35,7 @@
 @endpush
 
 @section('content')
-<div class="tb-content tb-style1">
+<div class="tb-content tb-style1 pb-5">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">{{ @$customer ? 'Edit Pembeli: '.$customer->name : 'Tambah Pembeli' }} </h2>
         <a href="{{ url('customers') }}" class="btn btn-danger btn-sm">Kembali</a>
@@ -109,6 +109,6 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 @endsection

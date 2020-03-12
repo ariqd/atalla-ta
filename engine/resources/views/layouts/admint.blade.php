@@ -19,8 +19,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/material-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/jqvmap.min.css" />
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/jquery-ui.css" /> --}}
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/quill.snow.css" /> --}}
+    
     @stack('css')
     <link id="mode-option" rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/style.css" />
     <style>

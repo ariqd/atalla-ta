@@ -10,4 +10,10 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected function toNumber($price)
+    {
+        $price = str_replace('.', '', $price);
+        return str_replace('Rp', '', $price);
+    }
 }

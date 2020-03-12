@@ -6,11 +6,20 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cleave.js@1.5.7/dist/cleave.min.js"></script>
+
 <script>
     $(document).ready(function () {
         $('.select2').select2();
     });
 
+    var cleave = new Cleave('.input-number', {
+        numeral: true,
+        delimiter: '.',
+        numeralDecimalMark: ',',
+        numeralThousandsGroupStyle: 'thousand',
+        prefix: 'Rp',
+    });
 </script>
 @endpush
 
@@ -40,8 +49,8 @@
                     </div>
                     <div class="form-group">
                         <label for="price">Harga Produk</label>
-                        <input type="number" class="form-control" id="price" name="price" placeholder="Harga produk"
-                            autofocus value="{{ @$product ? $product->price : '' }}" min="1">
+                        <input type="text" class="form-control input-number" id="price" name="price"
+                            placeholder="Harga produk" autofocus value="{{ @$product ? $product->price : '' }}" min="1">
                     </div>
                     <div class="form-group">
                         <label for="categories">Kategori</label>
@@ -59,6 +68,5 @@
             </div>
         </div>
     </div>
-    
 </div>
 @endsection

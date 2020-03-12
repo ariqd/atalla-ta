@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomersController extends Controller
 {
-    public function index() 
+    public function index()
     {
         $data['customers'] = Customer::latest()->get();
 
@@ -24,7 +24,7 @@ class CustomersController extends Controller
         return view('customer.form', $data);
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $data = $request->all();
         unset($data['_token']);
@@ -39,8 +39,8 @@ class CustomersController extends Controller
         ])->validate();
 
         $rajaongkir = new Rajaongkir;
-        $data['province_name'] = $rajaongkir->get('province?id='.$data['province_id'])->province;
-        $data['city_name'] = $rajaongkir->get('city?id='.$data['city_id'])->city_name;
+        $data['province_name'] = $rajaongkir->get('province?id=' . $data['province_id'])->province;
+        $data['city_name'] = $rajaongkir->get('city?id=' . $data['city_id'])->city_name;
 
         Customer::create($data);
 
@@ -52,14 +52,13 @@ class CustomersController extends Controller
         $rajaongkir = new Rajaongkir;
         $data['customer'] = $customer;
         $data['provinces'] = $rajaongkir->get('province');
-        $data['province_name'] = $rajaongkir->get('province?id='.$customer->province_id)->province;
-        // $data['city_name'] = $rajaongkir->get('city?id='.$customer->city_id)->city_name;
-        $data['cities'] = $rajaongkir->get('city?province='.$customer->province_id);
+        $data['province_name'] = $rajaongkir->get('province?id=' . $customer->province_id)->province;
+        $data['cities'] = $rajaongkir->get('city?province=' . $customer->province_id);
 
         return view('customer.form', $data);
     }
 
-    public function update(Request $request, Customer $customer) 
+    public function update(Request $request, Customer $customer)
     {
         $data = $request->all();
 
@@ -73,8 +72,8 @@ class CustomersController extends Controller
         ])->validate();
 
         $rajaongkir = new Rajaongkir;
-        $data['province_name'] = $rajaongkir->get('province?id='.$data['province_id'])->province;
-        $data['city_name'] = $rajaongkir->get('city?id='.$data['city_id'])->city_name;
+        $data['province_name'] = $rajaongkir->get('province?id=' . $data['province_id'])->province;
+        $data['city_name'] = $rajaongkir->get('city?id=' . $data['city_id'])->city_name;
 
         $customer->update($data);
 
@@ -88,12 +87,11 @@ class CustomersController extends Controller
         return redirect()->back()->with('info', 'Customer berhasil dihapus!');
     }
 
-    public function searchCities($id) 
+    public function searchCities($id)
     {
         $rajaongkir = new Rajaongkir;
-        $data = $rajaongkir->get('city?province='.$id);
-        
+        $data = $rajaongkir->get('city?province=' . $id);
+
         return response()->json($data, 200);
     }
-
 }

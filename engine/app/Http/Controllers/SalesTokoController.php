@@ -19,12 +19,6 @@ class SalesTokoController extends Controller
         $data['customers'] = Customer::latest()->get();
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
-        // $data['couriers'] = [
-        //     'jne' => 'JNE',
-        //     'pos' => 'Pos Indonesia',
-        //     'tiki' => 'TIKI',
-        //     'Lainnya' => 'Lainnya'
-        // ];
 
         return view('sales-toko.form', $data);
     }
@@ -60,7 +54,6 @@ class SalesTokoController extends Controller
 
                 $stock = Stock::find($detail->inventory_id);
 
-                // $detail->qty = 40;
                 $stock->qty -= $detail->qty;
 
                 if ($stock->qty < 0) {
@@ -83,17 +76,7 @@ class SalesTokoController extends Controller
     public function edit($id)
     {
         $data['sale'] = Purchase::with('details.stock.product')->find($id);
-        // dd($data);
-        // $data['stocks'] = Stock::with('product')->latest()->get();
         $data['customers'] = Customer::latest()->get();
-        // $counter = Counter::where("name", "=", "SO")->first();
-        // $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
-        // $data['couriers'] = [
-        //     'jne' => 'JNE',
-        //     'pos' => 'Pos Indonesia',
-        //     'tiki' => 'TIKI',
-        //     'Lainnya' => 'Lainnya'
-        // ];
 
         return view('sales-toko.form', $data);
     }
@@ -109,14 +92,6 @@ class SalesTokoController extends Controller
 
         return response()->json($data, 200);
     }
-
-
-    // public function searchCustomer($id)
-    // {
-    //     $data['customer'] = Customer::find($id);
-
-    //     return response()->json($data, 200);
-    // }
 
     public function cost(Request $request)
     {
@@ -134,5 +109,10 @@ class SalesTokoController extends Controller
         $data = json_decode($cost->getBody());
 
         return response()->json($data, 200);
+    }
+
+    public function deleteDetail($id)
+    {
+        dd($id);
     }
 }

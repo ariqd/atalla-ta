@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Counter;
 use App\Customer;
 use App\Helpers\Rajaongkir;
-use App\Product;
+// use App\Product;
 use App\Purchase;
 use App\Purchase_detail;
 use App\Stock;
@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Auth;
 
 class SalesController extends Controller
 {
+    private $couriers = [
+        'jne' => 'JNE',
+        'pos' => 'Pos Indonesia',
+        'tiki' => 'TIKI',
+        'Lainnya' => 'Lainnya'
+    ];
+
     public function index()
     {
         $data['sales'] = Purchase::latest()->get();
@@ -27,12 +34,7 @@ class SalesController extends Controller
         $data['customers'] = Customer::latest()->get()->except(1);
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
-        $data['couriers'] = [
-            'jne' => 'JNE',
-            'pos' => 'Pos Indonesia',
-            'tiki' => 'TIKI',
-            'Lainnya' => 'Lainnya'
-        ];
+        $data['couriers'] = $this->couriers;
 
         return view('sales.form', $data);
     }
@@ -76,17 +78,9 @@ class SalesController extends Controller
     public function edit($id)
     {
         $data['sale'] = Purchase::with('details.stock.product')->find($id);
-        // dd($data);
         $data['stocks'] = Stock::with('product')->latest()->get();
         $data['customers'] = Customer::latest()->get()->except(1);
-        // $counter = Counter::where("name", "=", "SO")->first();
-        // $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
-        $data['couriers'] = [
-            'jne' => 'JNE',
-            'pos' => 'Pos Indonesia',
-            'tiki' => 'TIKI',
-            'Lainnya' => 'Lainnya'
-        ];
+        $data['couriers'] = $this->couriers;
 
         return view('sales.form', $data);
     }
@@ -119,11 +113,10 @@ class SalesController extends Controller
         $rajaongkir = new Rajaongkir;
         $cost = $rajaongkir->post('cost', $postFields);
         $data = json_decode($cost->getBody());
-        // $data['courier'] = request()->get('courier');
-        // $data['weight'] = request()->get('weight');
 
         return response()->json($data, 200);
     }
+
     public function makeLunas($id)
     {
         $sale = Purchase::find($id);
@@ -142,7 +135,8 @@ class SalesController extends Controller
 
                 $detail->status = 2;
                 $detail->save();
-            }            
+            }
+
             $stock->save();
         }
 

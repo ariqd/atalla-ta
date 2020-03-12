@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
 {
+    private $categories = [
+        'Gamis',
+        'Blus',
+        'Rompi'
+    ];
+
     public function index()
     {
         $data['products'] = Product::latest()->get();
@@ -17,16 +23,12 @@ class ProductsController extends Controller
 
     public function create()
     {
-        $data['categories'] = [
-            'Gamis',
-            'Blus',
-            'Rompi'
-        ];
+        $data['categories'] = $this->categories;
 
         return view('product.form', $data);
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $data = $request->all();
         unset($data['_token']);
@@ -34,9 +36,11 @@ class ProductsController extends Controller
         Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'numeric'],
+            'price' => ['required'],
             'category' => ['required'],
         ])->validate();
+
+        $data['price'] = $this->toNumber($data['price']);
 
         Product::create($data);
 
@@ -46,16 +50,12 @@ class ProductsController extends Controller
     public function edit(Product $product)
     {
         $data['product'] = $product;
-        $data['categories'] = [
-            'Gamis',
-            'Blus',
-            'Rompi'
-        ];
+        $data['categories'] = $this->categories;
 
         return view('product.form', $data);
     }
 
-    public function update(Request $request, Product $product) 
+    public function update(Request $request, Product $product)
     {
         $data = $request->all();
 
@@ -77,5 +77,4 @@ class ProductsController extends Controller
 
         return redirect()->back()->with('info', 'Produk berhasil dihapus!');
     }
-
 }

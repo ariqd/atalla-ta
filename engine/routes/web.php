@@ -18,10 +18,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('sales/lunas/{id}', 'SalesController@makeLunas');
 
     Route::resource('sales-toko', 'SalesTokoController');
-    Route::get('sales-toko/search/{id}', 'Sales-tokoController@search');
-    Route::get('sales-toko/search-customer/{id}', 'Sales-tokoController@searchCustomer');
-    Route::post('sales-toko/cost', 'Sales-tokoController@cost');
-    
+    Route::get('sales-toko/search/{id}', 'SalesTokoController@search');
+    Route::get('sales-toko/search-customer/{id}', 'SalesTokoController@searchCustomer');
+    Route::post('sales-toko/cost', 'SalesTokoController@cost');
+    Route::post('sales-toko/delete-detail/{id}', 'SalesTokoController@deleteDetail');
+
     Route::resource('users', 'UsersController');
     Route::post('users/change-password/{id}', 'UsersController@changePassword');
+
+    // Route::get('sales-toko', 'SalesTokoController@create');
 });
