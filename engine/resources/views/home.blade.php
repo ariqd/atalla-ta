@@ -23,7 +23,7 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
-                                <h3 class="tb-iconbox-heading">{{ $sales_count }}</h3>
+                                <h4>{{ $sales_count }}</h4>
                                 <div class="tb-iconbox-sub-heading">Penjualan bulan ini</div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
@@ -38,7 +38,7 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
-                                <h3 class="tb-iconbox-heading">Rp {{ number_format($revenue, 0, ',', '.') }}</h3>
+                                <h4>Rp {{ number_format($revenue, 0, ',', '.') }}</h4>
                                 <div class="tb-iconbox-sub-heading">Revenue</div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
@@ -53,7 +53,7 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
-                                <h3 class="tb-iconbox-heading">{{ $products_sold }}</h3>
+                                <h4>{{ $products_sold }}</h4>
                                 <div class="tb-iconbox-sub-heading">Produk Terjual</div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
@@ -69,7 +69,7 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
-                                <h3 class="tb-iconbox-heading">{{ $needs_restock }}</h3>
+                                <h4>{{ $needs_restock }}</h4>
                                 <div class="tb-iconbox-sub-heading">Produk perlu di restock</div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />

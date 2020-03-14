@@ -9,14 +9,25 @@ use Illuminate\Support\Facades\Validator;
 class ProductsController extends Controller
 {
     private $categories = [
+        'Hijab',
         'Gamis',
         'Blus',
-        'Rompi'
+        'Rompi',
+        'Rok'
     ];
 
     public function index()
     {
         $data['products'] = Product::latest()->get();
+        $data['categories'] = $this->categories;
+
+        $product_id = @$_GET['product_id'];
+        if ($product_id) {
+            $product = Product::find($product_id);
+            if ($product) {
+                $data['product'] = $product;
+            }
+        }
 
         return view('product.index', $data);
     }
@@ -42,9 +53,13 @@ class ProductsController extends Controller
 
         $data['price'] = $this->toNumber($data['price']);
 
-        Product::create($data);
+        $product = Product::firstOrCreate($data);
 
-        return redirect()->back()->with('info', 'Produk baru berhasil ditambahkan!');
+        if ($product) {
+            return redirect('products')->with('error', `$product->code $product->name berhasil di update!`);
+        } else {
+            return redirect('products')->with('info', 'Produk baru berhasil ditambahkan!');
+        }
     }
 
     public function edit(Product $product)
@@ -62,19 +77,21 @@ class ProductsController extends Controller
         Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'numeric'],
+            'price' => ['required'],
             'category' => ['required'],
         ])->validate();
 
+        $data['price'] = $this->toNumber($data['price']);
+
         $product->update($data);
 
-        return redirect()->back()->with('info', 'Produk berhasil di-update!');
+        return redirect('products')->with('info', 'Produk berhasil di-update!');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
 
-        return redirect()->back()->with('info', 'Produk berhasil dihapus!');
+        return redirect('products')->with('info', 'Produk berhasil dihapus!');
     }
 }

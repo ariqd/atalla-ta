@@ -72,7 +72,7 @@
                                     <td>{{ $sale->purchase_no }}</td>
                                     <td>{{ $sale->customer->name }}</td>
                                     <td>
-                                        @if ($sale->status == 0)
+                                        @if ($sale->status != 'LUNAS')
                                         <span class="tb-badge tb-box-colo4">BELUM LUNAS</span>
                                         @else
                                         <span class="tb-badge tb-box-colo1">LUNAS</span>
@@ -83,7 +83,7 @@
                                         <a href="{{ route('sales-toko.edit', $sale) }}" class="text-info mr-3">Detail /
                                             Edit</a>
                                         @else
-                                        @if ($sale->status == 0)
+                                        @if ($sale->status != 'LUNAS')
                                         <a href="{{ route('sales.edit', $sale) }}" class="text-primary mr-3">Lunasi Pembelian</a>
                                         @else
                                         <a href="{{ route('sales.edit', $sale) }}" class="text-info mr-3">Detail /

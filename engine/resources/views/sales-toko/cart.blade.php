@@ -140,9 +140,10 @@
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @if (@$sale)
-                            @if ($sale->status == 0)
-                            <a href="#" class="btn btn-block btn-success"><i class="fa fa-check"></i> Pembelian Ini
-                                Lunas</a>
+                            @if ($sale->status == 'LUNAS')
+                            {{-- <a href="#" class="btn btn-block btn-success"><i class="fa fa-check"></i> Pembelian Ini
+                                Lunas</a> --}}
+                                Pembelian ini lunas
                             @else
                             <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
                             @endif

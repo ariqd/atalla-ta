@@ -34,7 +34,7 @@ class SalesTokoController extends Controller
             'courier_name' => '-',
             'courier_fee' => 0,
             'discount' => $data['discount'],
-            'status' => 1,
+            'status' => 'LUNAS',
             'total' => $data['total']
         ]);
 

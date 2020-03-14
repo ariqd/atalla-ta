@@ -296,7 +296,7 @@
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
-        @if (@$sale && @$sale->status == 0)
+        @if (@$sale && @$sale->status != 'LUNAS')
         <div class="row mb-3">
             <div class="col-12">
                 <div class="tb-alert tb-danger">
@@ -476,9 +476,10 @@
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @if (@$sale)
-                            @if ($sale->status == 0)
-                            <a href="#" class="btn btn-block btn-warning"><i class="fa fa-check"></i> Ubah Status
-                                Pembelian ke Lunas </a>
+                            @if ($sale->status != 'LUNAS')
+                            <a href="#" class="btn btn-block btn-warning">
+                                <i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas
+                            </a>
                             @endif
                             <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
                             @endif

@@ -18,7 +18,7 @@ class CreatePurchaseDetailsTable extends Migration
             $table->unsignedBigInteger('purchase_id');
             $table->unsignedBigInteger('inventory_id');
             $table->integer('qty');
-            $table->smallInteger('status');
+            $table->string('status');
             $table->integer('subtotal');
             $table->timestamps();
 

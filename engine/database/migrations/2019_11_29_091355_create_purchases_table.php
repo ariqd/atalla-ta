@@ -21,7 +21,7 @@ class CreatePurchasesTable extends Migration
             $table->string('courier_name');
             $table->integer('courier_fee');
             $table->integer('discount');
-            $table->smallInteger('status');
+            $table->string('status');
             $table->integer('total');
             $table->timestamps();
 

@@ -305,9 +305,11 @@
                                                     aria-label="Total: activate to sort column ascending"
                                                     style="text-align:right;width: 25%">Total
                                                 </th>
+                                                @if(!@$sale)
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked"
                                                     aria-label="Action: activate to sort column ascending"
                                                     style="text-align:right;width: 5%"></th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody id="tbody">
@@ -322,6 +324,7 @@
                                                         value="{{ $detail->id }}">
                                                 </td>
                                                 <td class="align-middle text-right" style="width: 25%">
+                                                    @if (!@$sale)
                                                     <div class="input-group">
                                                         <input type="number" class="form-control"
                                                             id="qty-{{ $detail->id }}" value="{{ $detail->qty }}"
@@ -331,6 +334,10 @@
                                                             <span class="input-group-text">pcs</span>
                                                         </div>
                                                     </div>
+                                                    @else
+                                                    <span class="text-right"><strong>{{ $detail->qty }}
+                                                            pcs</strong></span>
+                                                    @endif
                                                 </td>
                                                 <td class="align-middle text-right" style="width: 20%">
                                                     Rp{{ number_format($detail->stock->product->price, 0, ',', '.') }}
@@ -345,12 +352,6 @@
                                                     <input type="hidden" class="form-control subtotal"
                                                         id="subtotal-{{ $detail->id }}" value="{{ $detail->subtotal }}"
                                                         name="item[{{ $key }}][subtotal]" readonly>
-                                                </td>
-                                                <td class="align-middle text-right" style="width: 5%">
-                                                    <a title="Delete Product" href="{{ url('sales-toko/delete-detail/'.$detail->id) }}"
-                                                        class="text-danger">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -371,14 +372,17 @@
                             <div class="mb-2 form-row">
                                 <label for="discount" class="col-8 col-form-label">Diskon (%)</label>
                                 <div class="col-4">
-                                    <input type="number" class="form-control" id="discount" name="discount"
-                                        value="{{ @$sale ? $sale->discount : 0 }}" oninput="countTotal()" min="0"
-                                        max="100" />
+                                    @if (!@$sale)
+                                    <input type="number" class="form-control" id="discount" name="discount" value="0"
+                                        oninput="countTotal()" min="0" max="100" />
+                                    @else
+                                    <p class="text-right"><strong>{{ $sale->discount }}%</strong></p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="form-row">
+                            <div class="form-row mt-2">
                                 <div class="col-2">
-                                    <p>Total</p>
+                                    <h4>Total</h4>
                                 </div>
                                 <div class="col-10">
                                     <h4 class="float-right">Rp
@@ -389,16 +393,24 @@
                                     <input type="hidden" id="grand-total-input" name="total">
                                 </div>
                             </div>
+                            <hr>
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
-                            <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @if (@$sale)
-                            @if ($sale->status == 0)
-                            <a href="#" class="btn btn-block btn-success"><i class="fa fa-check"></i>
-                                Pembelian Ini Lunas
-                            </a>
-                            @else
+                            @if ($sale->status == 'LUNAS')
+                            <div class="row my-2">
+                                <div class="col-6">
+                                    Status Transaksi
+                                </div>
+                                <div class="col-6 text-right">
+                                    <span class="badge badge-success">Lunas</span>
+                                </div>
+                            </div>
                             <a href="#" class="btn btn-block btn-success">Cetak Nota Penjualan</a>
+                            @else
+                            <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @endif
+                            @else
+                            <button type="submit" id="btnPay" class="btn btn-info btn-block">Simpan</button>
                             @endif
                         </div>
                     </div>

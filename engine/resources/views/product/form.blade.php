@@ -39,22 +39,22 @@
                     {{ @$product ? method_field('PUT') : '' }}
                     <div class="form-group">
                         <label for="name">Nama</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Nama produk"
+                        <input type="text" class="form-control col-6" id="name" name="name" placeholder="Nama produk"
                             autofocus value="{{ @$product ? $product->name : '' }}">
                     </div>
                     <div class="form-group">
                         <label for="code">Kode Produk</label>
-                        <input type="text" class="form-control" id="code" name="code" placeholder="Kode produk"
+                        <input type="text" class="form-control col-6" id="code" name="code" placeholder="Kode produk"
                             autofocus value="{{ @$product ? $product->code : '' }}">
                     </div>
                     <div class="form-group">
                         <label for="price">Harga Produk</label>
-                        <input type="text" class="form-control input-number" id="price" name="price"
+                        <input type="text" class="form-control input-number col-2" id="price" name="price"
                             placeholder="Harga produk" autofocus value="{{ @$product ? $product->price : '' }}" min="1">
                     </div>
                     <div class="form-group">
-                        <label for="categories">Kategori</label>
-                        <select class="form-control select2" name="category" id="categories">
+                        <label for="categories">Kategori</label> <br>
+                        <select class="form-control select2 col-6" name="category" id="categories">
                             <option value="" selected disabled>- Pilih Kategori -</option>
                             @foreach ($categories as $category)
                             <option value="{{ $category }}" {{ @$product->category == $category ? 'selected' : '' }}>

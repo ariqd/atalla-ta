@@ -16,7 +16,7 @@ class HomeController extends Controller
     public function index()
     {
         $d['current_date'] = Carbon::now();
-        $purchasesInThisPeriod = Purchase::with('details')->whereMonth('created_at', date('m'))->where('status', 1);
+        $purchasesInThisPeriod = Purchase::with('details')->whereMonth('created_at', date('m'))->where('status', 'LUNAS');
         $d['sales_count'] = $purchasesInThisPeriod->count();
         $d['revenue'] = $purchasesInThisPeriod->sum('total');
 

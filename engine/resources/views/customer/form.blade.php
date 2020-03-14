@@ -13,12 +13,14 @@
 
     $("#provinces").change(function () {
         var id = $("#provinces").val();
+        $('.loading').show();
         $.ajax({
             url: "{!! url('customers/search-cities') !!}/" + id,
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
         }).then(function (response) {
             $("#cities").empty().trigger('change');
+            $('.loading').hide();
             $("#cities").select2({
                 placeholder: '- Pilih Kota / Kabupaten -',
                 data: $.map(response, function (item) {
@@ -38,7 +40,9 @@
 <div class="tb-content tb-style1 pb-5">
     <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
         <h2 class="tb-uikits-title">{{ @$customer ? 'Edit Pembeli: '.$customer->name : 'Tambah Pembeli' }} </h2>
-        <a href="{{ url('customers') }}" class="btn btn-danger btn-sm">Kembali</a>
+        <div class="text-right">
+            <a href="{{ url('customers') }}"><i class="fa fa-times"></i> Kembali</a>
+        </div>
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
@@ -104,7 +108,7 @@
                         </div>
                         <div class="tb-height-b5 tb-height-lg-b5"></div>
                     </div>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data Pembeli</button>
                 </form>
             </div>
         </div>
