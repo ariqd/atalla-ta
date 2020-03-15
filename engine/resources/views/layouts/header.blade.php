@@ -4,10 +4,10 @@
         <div class="tb-main-header-in">
             <div class="tb-main-header-left">
                 <a href="{{ url('/') }}" class="tb-logo-link tb-light-logo">
-                    <img src="{{ asset('') }}/img/logo2.png" alt="logo-light" width="50" />
+                    <img src="{{ asset('') }}/img/logo2.png" style="width:40%" alt="logo-light" />
                 </a>
                 <a href="{{ url('/') }}" class="tb-logo-link tb-dark-logo">
-                    <img src="{{ asset('') }}/img/logo2.png" alt="logo-dark" width="50" />
+                    <img src="{{ asset('') }}/img/logo2.png" style="width:40%" alt="logo-dark" />
                 </a>
             </div>
             <div class="tb-main-header-right">
@@ -27,8 +27,7 @@
                                 <li>
                                     <a href="#" onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">Sign Out</a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                        style="display: none;">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
                                 </li>

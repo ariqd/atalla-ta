@@ -19,9 +19,11 @@ class CreatePurchasesTable extends Migration
             $table->unsignedBigInteger('sales_id');
             $table->string('purchase_no');
             $table->string('courier_name');
+            $table->string('courier_service');
             $table->integer('courier_fee');
             $table->integer('discount');
             $table->string('status');
+            $table->integer('weight')->default(0);
             $table->integer('total');
             $table->timestamps();
 

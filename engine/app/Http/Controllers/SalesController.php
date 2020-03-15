@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Counter;
 use App\Customer;
 use App\Helpers\Rajaongkir;
-// use App\Product;
 use App\Purchase;
 use App\Purchase_detail;
 use App\Stock;
@@ -18,7 +17,7 @@ class SalesController extends Controller
         'jne' => 'JNE',
         'pos' => 'Pos Indonesia',
         'tiki' => 'TIKI',
-        'Lainnya' => 'Lainnya'
+        // 'Lainnya' => 'Lainnya'
     ];
 
     public function index()
@@ -31,9 +30,13 @@ class SalesController extends Controller
     public function create()
     {
         $data['stocks'] = Stock::with('product')->latest()->get();
+
         $data['customers'] = Customer::latest()->get()->except(1);
+
         $counter = Counter::where("name", "=", "SO")->first();
+
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
+
         $data['couriers'] = $this->couriers;
 
         return view('sales.form', $data);
@@ -48,10 +51,12 @@ class SalesController extends Controller
             'sales_id' => Auth::id(),
             'purchase_no' => $data['purchase_no'],
             'courier_name' => $data['courier_name'],
-            'courier_fee' => $data['service'],
+            'courier_service_name' => $data['courier_service_name'],
+            'courier_fee' => $data['courier_fee'],
             'discount' => $data['discount'],
             'status' => 0,
-            'total' => $data['total']
+            'weight' => $data['weight'],
+            'total' => $data['total'],
         ]);
 
         if ($purchase) {
@@ -59,7 +64,7 @@ class SalesController extends Controller
             $counter->counter += 1;
             $counter->save();
 
-            foreach ($data['item'] as $key => $value) {
+            foreach ($data['item'] as $value) {
                 Purchase_detail::create([
                     'purchase_id' => $purchase->id,
                     'inventory_id' => $value['id'],
@@ -78,11 +83,28 @@ class SalesController extends Controller
     public function edit($id)
     {
         $data['sale'] = Purchase::with('details.stock.product')->find($id);
+
         $data['stocks'] = Stock::with('product')->latest()->get();
+
         $data['customers'] = Customer::latest()->get()->except(1);
+
         $data['couriers'] = $this->couriers;
 
         return view('sales.form', $data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $purchase = Purchase::with('details')->find($id);
+
+        $purchase->fill($request->only([
+            'courier_name',
+            'courier_service_name',
+            'courier_fee',
+            'discount'
+        ]))->save();
+
+        return redirect()->back()->with('info', 'Nota penjualan toko berhasil diupdate!');
     }
 
     public function search($id)
@@ -120,7 +142,7 @@ class SalesController extends Controller
     public function makeLunas($id)
     {
         $sale = Purchase::find($id);
-        $sale->status = 1;
+        $sale->status = 'LUNAS';
         $sale->save();
 
         foreach ($sale->details as $detail) {
