@@ -13,7 +13,7 @@ class Purchase_detail extends Model
         return $this->belongsTo('App\Purchase');
     }
 
-    public function stock() 
+    public function stock()
     {
         return $this->hasOne('App\Stock', 'id', 'inventory_id');
     }

@@ -79,14 +79,14 @@
                                     @if (Auth::user()->role == 'owner')
                                     <td>
                                         <a href="{{ route('stocks.edit', $stock) }}" class="text-info mr-3">Edit</a>
-                                        <a href="#" class="text-danger btnDelete">
+                                        {{-- <a href="#" class="text-danger btnDelete">
                                             Hapus
                                         </a>
                                         <form action="{{ route('stocks.destroy', $stock) }}" method="post"
                                             class="formDelete d-none">
                                             {!! csrf_field() !!}
                                             {!! method_field('delete') !!}
-                                        </form>
+                                        </form> --}}
                                     </td>
                                     @endif
                                 </tr>

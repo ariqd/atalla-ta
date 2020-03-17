@@ -75,14 +75,14 @@
                                     <td>{{ $user->email }}</td>
                                     <td>
                                         <a href="{{ route('users.edit', $user) }}" class="text-info mr-3">Edit</a>
-                                        <a href="#" class="text-danger btnDelete">
+                                        {{-- <a href="#" class="text-danger btnDelete">
                                             Hapus
                                         </a>
                                         <form action="{{ route('users.destroy', $user) }}" method="post"
                                             class="formDelete d-none">
                                             {!! csrf_field() !!}
                                             {!! method_field('delete') !!}
-                                        </form>
+                                        </form> --}}
                                     </td>
                                 </tr>
                                 @endforeach
