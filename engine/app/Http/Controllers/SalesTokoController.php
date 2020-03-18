@@ -15,7 +15,7 @@ class SalesTokoController extends Controller
 {
     public function create()
     {
-        $data['stocks'] = Stock::with('product')->latest()->get();
+        $data['stocks'] = Stock::with('product')->available()->latest()->get();
         $data['customers'] = Customer::latest()->get();
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
@@ -27,6 +27,26 @@ class SalesTokoController extends Controller
     {
         $data = $request->all();
 
+        /**
+         * ================================================================================
+         * Cek ketersediaan stok.
+         * Kembali ke halaman sebelumnya jika ada stok yang kurang dari jumlah yang dibeli.
+         * ================================================================================
+         */
+        foreach ($data['item'] as $value) {
+            $stock = Stock::find($value['id']);
+
+            if ($stock->qty < $value['qty']) {
+                return redirect()->back()->with(
+                    'error',
+                    'Stok produk ' . $stock->product->code . ' tidak cukup untuk menyelesaikan transaksi! Stok tersedia: ' . $stock->qty
+                );
+            } else {
+                $stock->qty -= $value['qty'];
+                $stock->save();
+            }
+        }
+
         $purchase = Purchase::create([
             'customer_id' => $data['customer_id'],
             'sales_id' => Auth::id(),
@@ -34,7 +54,7 @@ class SalesTokoController extends Controller
             'courier_name' => '-',
             'courier_fee' => 0,
             'discount' => $data['discount'],
-            'status' => 'LUNAS',
+            'status' => 'FINISH',
             'total' => $data['total']
         ]);
 
@@ -43,28 +63,14 @@ class SalesTokoController extends Controller
             $counter->counter += 1;
             $counter->save();
 
-            foreach ($data['item'] as $key => $value) {
-                $detail = Purchase_detail::create([
+            foreach ($data['item'] as $value) {
+                Purchase_detail::create([
                     'purchase_id' => $purchase->id,
                     'inventory_id' => $value['id'],
                     'qty' => $value['qty'],
-                    'status' => 0,
+                    'status' => 'OK',
                     'subtotal' => $value['subtotal']
                 ]);
-
-                $stock = Stock::find($detail->inventory_id);
-
-                $stock->qty -= $detail->qty;
-
-                if ($stock->qty < 0) {
-                    $hold = abs($stock->qty - 0);
-                    $stock->qty_hold += $hold;
-                    $stock->qty = 0;
-
-                    $detail->status = 2;
-                    $detail->save();
-                }
-                $stock->save();
             }
 
             return redirect()->back()->with('info', 'Nota penjualan toko berhasil ditambahkan!');

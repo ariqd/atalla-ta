@@ -17,7 +17,6 @@ class SalesController extends Controller
         'jne' => 'JNE',
         'pos' => 'Pos Indonesia',
         'tiki' => 'TIKI',
-        // 'Lainnya' => 'Lainnya'
     ];
 
     public function index()
@@ -29,7 +28,7 @@ class SalesController extends Controller
 
     public function create()
     {
-        $data['stocks'] = Stock::with('product')->latest()->get();
+        $data['stocks'] = Stock::with('product')->available()->latest()->get();
 
         $data['customers'] = Customer::latest()->get()->except(1);
 
@@ -54,7 +53,7 @@ class SalesController extends Controller
             'courier_service_name' => $data['courier_service_name'],
             'courier_fee' => $data['courier_fee'],
             'discount' => $data['discount'],
-            'status' => 0,
+            'status' => 'BELUM LUNAS',
             'weight' => $data['weight'],
             'total' => $data['total'],
         ]);
@@ -145,6 +144,15 @@ class SalesController extends Controller
         $sale->status = 'LUNAS';
         $sale->save();
 
+        return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
+    }
+
+    public function makeDikirim($id)
+    {
+        $sale = Purchase::find($id);
+        $sale->status = 'DIKIRIM';
+        $sale->save();
+
         foreach ($sale->details as $detail) {
             $stock = Stock::find($detail->inventory_id);
             $stock->qty -= $detail->qty;
@@ -161,6 +169,15 @@ class SalesController extends Controller
 
             $stock->save();
         }
+
+        return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
+    }
+
+    public function makeFinish($id)
+    {
+        $sale = Purchase::find($id);
+        $sale->status = 'FINISH';
+        $sale->save();
 
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
     }

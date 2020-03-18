@@ -1,7 +1,12 @@
 @extends('layouts.admint')
 
+@push('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
+    {!! $transactionsChart->script() !!}
+@endpush
+
 @section('content')
-<div class="tb-content tb-style1">
+<div class="tb-content tb-style1 pb-5">
     <div class="tb-height-b30 tb-height-lg-b30"></div>
     <div class="container-fluid">
         <div class="row">
@@ -24,7 +29,7 @@
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
                                 <h4>{{ $sales_count }}</h4>
-                                <div class="tb-iconbox-sub-heading">Penjualan bulan ini</div>
+                                <div class="tb-iconbox-sub-heading">Transaksi finish bulan ini</div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
                             </div>
@@ -81,60 +86,37 @@
             <div class="col-lg-3 col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5>Produk Terlaris</h5>
-
-                        <div class="form-row py-1">
-                            <div class="col-1">
-                                <p><strong>1</strong></p>
+                        <h5 class="mb-3">Produk Terlaris</h5>
+                        @foreach($bestselling_products as $value)
+                            <div class="form-row">
+                                <div class="col-1">
+                                    <p><strong>{{ $loop->iteration }}</strong></p>
+                                </div>
+                                <div class="col-8">
+                                    <p class="mb-0"><strong>{{ $value['product']->product->name }}</strong></p>
+                                    <p>{{ $value['product']->product->code }}</p>
+                                </div>
+                                <div class="col-3 text-right">
+                                    <p class="mb-0 font-weight-bold">{{ $value['qty'] }}</p>
+                                    <p>pcs</p>
+                                </div>
                             </div>
-                            <div class="col-8">
-                                <p class="mb-0"><strong>Nama Produk</strong></p>
-                                <p>GA-121</p>
-                            </div>
-                            <div class="col-3 text-right">
-                                <p class="mb-0 font-weight-bold">121</p>
-                                <p>pcs</p>
-                            </div>
-                        </div>
-
-                        <div class="form-row py-1">
-                            <div class="col-1">
-                                <p><strong>2</strong></p>
-                            </div>
-                            <div class="col-8">
-                                <p class="mb-0"><strong>Nama Produk</strong></p>
-                                <p>GA-121</p>
-                            </div>
-                            <div class="col-3 text-right">
-                                <p class="mb-0 font-weight-bold">121</p>
-                                <p>pcs</p>
-                            </div>
-                        </div>
-
-                        <div class="form-row py-2">
-                            <div class="col-1">
-                                <strong>1</strong>
-                            </div>
-                            <div class="col-8">
-                                <h5 class="mb-0">Nama Produk</h5>
-                                <p>GA-121</p>
-                            </div>
-                            <div class="col-3 text-right">
-                                <h5 class="mb-0">121</h5>
-                                <p>pcs</p>
-                            </div>
-                        </div>
-
+                        @endforeach
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-9 col-sm-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5>Grafik Transaksi per Hari</h5>
+                        {{-- <h5>Transaksi per Hari</h5> --}}
+                        <div class="w-100">
+                            {!! $transactionsChart->container() !!}
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

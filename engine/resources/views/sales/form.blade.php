@@ -79,7 +79,7 @@
             });
 
             $('#services').change(function () {
-                var ongkir = $(this).val();  
+                var ongkir = $(this).val();
                 $('#courier_service_name').val($('#services option:selected').text());
                 $('#courier_fee-text').html('Rp ' + number_format(ongkir, '.', ',', 0));
                 $('#courier_fee-text').html('Rp ' + number_format(ongkir, '.', ',', 0));
@@ -162,13 +162,6 @@
                     },
                     complete: function () {
                         $('.loading').hide();
-                        // $('.input-number').cleave({
-                        //     numeral: true,
-                        //     delimiter: '.',
-                        //     numeralDecimalMark: ',',
-                        //     numeralThousandsGroupStyle: 'thousand',
-                        //     prefix: 'Rp',
-                        // });
                     }
                 });
             });
@@ -311,7 +304,7 @@
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
-        @if(@$sale && @$sale->status != 'LUNAS')
+        @if(@$sale && @$sale->status == 'BELUM LUNAS')
             <div class="row mb-3">
                 <div class="col-12">
                     <div class="tb-alert">
@@ -320,7 +313,7 @@
                                 <i class="fa fa-exclamation-circle"></i> Customer belum melunasi pembelian.
                             </div>
                             <div>
-                                <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-primary btn-sm m-0 no-underline"><i class="fa fa-check"></i> LUNAS</a>
+                                <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-success btn-sm m-0 no-underline"><i class="fa fa-check"></i> Lunas</a>
                             </div>
                         </div>
                     </div>
@@ -413,7 +406,7 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            @if(@$sale->status == 'LUNAS')
+                            @if(@$sale && @$sale->status != 'BELUM LUNAS')
                                 <div class="row align-items-center">
                                     <div class="col-4">
                                         <label for="customers">Customer</label>
@@ -454,8 +447,8 @@
                                         <p> {{ $sale->courier_service_name }} | {{ $sale->weight }} gram</p>
                                     </div>
                                 </div>
-                                @if(@$sale->status != 'LUNAS')
-                                    {{-- If edit and status belum lunas --}}
+                                @if(@$sale->status == 'BELUM LUNAS')
+                                    {{-- If edit and status BELUM LUNAS --}}
                                     <div class="card border-warning mb-3">
                                         <div class="card-body p-2">
                                             <p class="font-weight-bold"><i class="fa fa-info-circle"></i> Edit Kurir</p>
@@ -515,7 +508,6 @@
                                 </div>
                                 <div class="col-6">
                                     <input type="hidden" id="destination" name="destination" value="{{ @$sale ? @$sale->customer->city_id : 0 }}">
-                                    {{-- <input type="hidden" class="form-control" id="courier_fee" name="courier_fee" value="{{ @$sale ? $sale->courier_fee : 0 }}"> --}}
                                     <p class="float-right" id="courier_fee-text">
                                         Rp {{ @$sale ? number_format($sale->courier_fee, 0, ',', '.') : '' }}
                                     </p>
@@ -534,13 +526,57 @@
                             </div>
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             @if(@$sale)
-                                @if($sale->status != 'LUNAS')
-                                    <a href="#" class="btn btn-block btn-primary my-2">
+                                <hr>
+                                @if(@$sale->status == 'BELUM LUNAS')
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            Status Transaksi
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="tb-badge tb-box-colo4">BELUM LUNAS</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-block btn-success my-2">
                                         <i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas
                                     </a>
                                     <button type="submit" class="btn btn-info btn-block my-2">Edit Nota Penjualan</button>
+                                @elseif(@$sale->status == 'LUNAS')
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            Status Transaksi
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="tb-badge tb-box-colo3">LUNAS</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('sales/dikirim/'.@$sale->id) }}" class="btn btn-block btn-primary btn- my-2">
+                                        <i class="fa fa-check"></i> Barang Dikirim Ke {{ $sale->customer->status }} {{ $sale->customer->name }}
+                                    </a>
+                                @elseif(@$sale->status == 'DIKIRIM')
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            Status Transaksi
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="tb-badge tb-box-colo2">BARANG DIKIRIM</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('sales/finish/'.@$sale->id) }}" class="btn btn-block btn-info my-2">
+                                        <i class="fa fa-check"></i> Barang Diterima {{ $sale->customer->status }} {{ $sale->customer->name }}
+                                    </a>
+                                @elseif(@$sale->status == 'FINISH')
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            Status Transaksi
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="tb-badge tb-box-colo1">finish</span>
+                                        </div>
+                                    </div>
                                 @endif
-                                <a role="button" href="#" class="btn btn-block btn-success my-2">Cetak Nota Penjualan</a>
+                                <a role="button" href="#" class="btn btn-outline-link btn-block my-3">
+                                    <i class="fa fa-print"></i> Cetak Nota Penjualan
+                                </a>
                             @else
                                 <button type="submit" id="btnPay" class="btn btn-info btn-block my-2">Simpan</button>
                             @endif
