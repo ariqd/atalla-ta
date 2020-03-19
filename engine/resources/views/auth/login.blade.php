@@ -30,36 +30,43 @@
                             {{-- <img src="{{ asset('assets') }}/img/signup/signup-logo.png" alt=""> --}}
                         </div>
                         <div class="tb-height-b25 tb-height-lg-b25"></div>
+                        <div class="alert alert-info text-left">
+                            <strong>Owner</strong>
+                            <ul>
+                                <li>Email: owner@atalla.com</li>
+                                <li>Password: password</li>
+                            </ul>
+                            <strong>Sales</strong>
+                            <ul>
+                                <li>Email: sales@atalla.com</li>
+                                <li>Password: password</li>
+                            </ul>
+                        </div>
                         <div class="tb-height-b25 tb-height-lg-b25"></div>
                         @csrf
                         <div class="form-group">
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                                name="email" value="{{ old('email') }}" required autocomplete="email"
-                                placeholder="E-mail">
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="E-mail">
 
                             @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <input id="password" type="password"
-                                class="form-control @error('password') is-invalid @enderror" name="password" required
-                                autocomplete="current-password" placeholder="Password">
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Password">
 
                             @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
                         <div class="form-group row">
                             <div class="col-12">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="rememberMe"
-                                        name="remember" {{ old('remember') ? 'checked' : '' }}>
+                                    <input type="checkbox" class="custom-control-input" id="rememberMe" name="remember" {{ old('remember') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="rememberMe">Remember Me</label>
                                 </div>
                             </div>

@@ -92,11 +92,11 @@
                                 <div class="col-1">
                                     <p><strong>{{ $loop->iteration }}</strong></p>
                                 </div>
-                                <div class="col-8">
-                                    <p class="mb-0"><strong>{{ $value['product']->product->name }}</strong></p>
-                                    <p>{{ $value['product']->product->code }}</p>
+                                <div class="col-7">
+                                    <p class="mb-0"><strong>{{ $value['stock']->product->name }}</strong></p>
+                                    <p>{{ $value['stock']->product->code }} | {{ $value['stock']->size }}</p>
                                 </div>
-                                <div class="col-3 text-right">
+                                <div class="col-4 text-right">
                                     <p class="mb-0 font-weight-bold">{{ $value['qty'] }}</p>
                                     <p>pcs</p>
                                 </div>

@@ -6,6 +6,7 @@ use App\Stock;
 use App\Purchase;
 use Carbon\Carbon;
 use App\Charts\TransactionsChart;
+use App\Purchase_detail;
 use Carbon\CarbonPeriod;
 
 class HomeController extends Controller
@@ -27,18 +28,26 @@ class HomeController extends Controller
         $display = [];
         $count = 0;
 
-        foreach ($purchasesInThisPeriod->get() as $purchases) {
-            $d['products_sold'] += $purchases->details->sum('qty');
-            foreach ($purchases->details as $details) {
-                $productsSoldInThisPeriod[] = [
-                    'product' => $details->stock,
-                    'qty' => $details->qty
-                ];
-            }
+        $details = Purchase_detail::whereHas('sale', function ($q) {
+            $q->where('status', 'FINISH');
+        })->whereMonth('created_at', date('m'))->get()->sortBy(function ($useritem, $key) {
+            return $useritem->stock->product->code;
+        });
+
+
+        foreach ($details as $detail) {
+            $productsSoldInThisPeriod[] = [
+                'stock' => $detail->stock,
+                'qty' => $detail->qty
+            ];
         }
 
-        foreach ($productsSoldInThisPeriod as $id => $value) {
-            if ($id > 0 && $display[count($display) - 1]['product'] == $value['product']) {
+        foreach ($purchasesInThisPeriod->get() as $purchases) {
+            $d['products_sold'] += $purchases->details->sum('qty');
+        }
+
+        foreach ($productsSoldInThisPeriod as $key => $value) {
+            if ($key > 0 && $display[count($display) - 1]['stock'] == $value['stock']) {
                 $display[count($display) - 1]['qty'] += $value['qty'];
             } else {
                 $display[] = $value;
@@ -46,13 +55,13 @@ class HomeController extends Controller
         }
 
         usort($display, function ($item1, $item2) use ($count) {
-            while ($count <= 5) {
+            if ($count <= 5) {
                 $count++;
                 return $item2['qty'] <=> $item1['qty'];
             }
         });
 
-        $d['bestselling_products'] = $display;
+        $d['bestselling_products'] = array_slice($display, 0, 5);
 
         $d['needs_restock'] = Stock::where('qty', '<=', 0)->count();
 

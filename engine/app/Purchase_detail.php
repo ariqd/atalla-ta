@@ -10,7 +10,7 @@ class Purchase_detail extends Model
 
     public function sale()
     {
-        return $this->belongsTo('App\Purchase');
+        return $this->belongsTo('App\Purchase', 'purchase_id');
     }
 
     public function stock()
