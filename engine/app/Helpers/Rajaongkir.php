@@ -8,11 +8,10 @@ class Rajaongkir
 {
     protected $base_uri;
     protected $client;
-    // protected $bearer;
 
     public function __construct()
     {
-        $this->base_uri = getenv("RAJAONGKIR_URL");
+        $this->base_uri = 'https://api.rajaongkir.com/starter/';
     }
 
     public function base_uri($api = "")
@@ -23,7 +22,7 @@ class Rajaongkir
     public function clients()
     {
         $this->client = new Client(['headers' => [
-            'key' => getenv('RAJAONGKIR_API'),
+            'key' => '3b39d078484ee120e98b662f515d1bd8',
             'content-type' => 'application/x-www-form-urlencoded'
         ]]);
 

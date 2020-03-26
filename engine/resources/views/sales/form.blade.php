@@ -407,7 +407,7 @@
                         </div>
                         <div class="col-4">
                             @if(@$sale && @$sale->status != 'BELUM LUNAS')
-                                <div class="row align-items-center">
+                                <div class="row">
                                     <div class="col-4">
                                         <label for="customers">Customer</label>
                                     </div>
@@ -421,7 +421,7 @@
                                 </div>
                             @else
                                 <div class="form-group">
-                                    <label for="customers">Customer</label>
+                                    <label for="customers">Customer:</label>
                                     <select class="form-control" name="customer_id" id="customers" {{ @$sale ? 'disabled' : '' }}>
                                         <option></option>
                                         @foreach($customers as $customer)
@@ -438,9 +438,9 @@
                             @endif
                             @if(@$sale)
                                 {{-- If edit, show text --}}
-                                <div class="d-flex align-items-center justify-content-between mt-4">
+                                <div class="d-flex justify-content-between mt-4">
                                     <div class="">
-                                        <span>Kurir</span>
+                                        <span>Kurir:</span>
                                     </div>
                                     <div class=" text-right">
                                         <strong>{{ strtoupper($sale->courier_name) }}</strong>
@@ -526,7 +526,6 @@
                             </div>
                             <input type="hidden" value="{{ @$sale ? $sale->purchase_no : $no_so }}" name="purchase_no">
                             @if(@$sale)
-                                <hr>
                                 @if(@$sale->status == 'BELUM LUNAS')
                                     <div class="row my-2">
                                         <div class="col-6">
@@ -536,10 +535,17 @@
                                             <span class="tb-badge tb-box-colo4">BELUM LUNAS</span>
                                         </div>
                                     </div>
-                                    <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-block btn-success my-2">
+                                    <button type="submit" class="btn btn-info btn-block mt-1 mb-2">Edit Nota Penjualan</button>
+                                    <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-block btn-success mb-2">
                                         <i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas
                                     </a>
-                                    <button type="submit" class="btn btn-info btn-block my-2">Edit Nota Penjualan</button>
+                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                        <i class="fa fa-print"></i> Cetak Nota Penjualan
+                                    </a>
+                                    <hr>
+                                    <a href="{{ url('sales/cancel/'.@$sale->id) }}" class="btn btn-block btn-secondary mt-3 mb-2">
+                                        <i class="fa fa-times"></i> Batalkan Transaksi
+                                    </a>
                                 @elseif(@$sale->status == 'LUNAS')
                                     <div class="row my-2">
                                         <div class="col-6">
@@ -551,6 +557,9 @@
                                     </div>
                                     <a href="{{ url('sales/dikirim/'.@$sale->id) }}" class="btn btn-block btn-primary btn- my-2">
                                         <i class="fa fa-check"></i> Barang Dikirim Ke {{ $sale->customer->status }} {{ $sale->customer->name }}
+                                    </a>
+                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                        <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                 @elseif(@$sale->status == 'DIKIRIM')
                                     <div class="row my-2">
@@ -564,6 +573,9 @@
                                     <a href="{{ url('sales/finish/'.@$sale->id) }}" class="btn btn-block btn-info my-2">
                                         <i class="fa fa-check"></i> Barang Diterima {{ $sale->customer->status }} {{ $sale->customer->name }}
                                     </a>
+                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                        <i class="fa fa-print"></i> Cetak Nota Penjualan
+                                    </a>
                                 @elseif(@$sale->status == 'FINISH')
                                     <div class="row my-2">
                                         <div class="col-6">
@@ -573,10 +585,22 @@
                                             <span class="tb-badge tb-box-colo1">finish</span>
                                         </div>
                                     </div>
+                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                        <i class="fa fa-print"></i> Cetak Nota Penjualan
+                                    </a>
+                                @elseif(@$sale->status == 'CANCEL')
+                                    <div class="row my-2">
+                                        <div class="col-6">
+                                            Status Transaksi
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <span class="tb-badge tb-box-colo7">Cancel</span>
+                                        </div>
+                                    </div>
+                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                        <i class="fa fa-print"></i> Cetak Nota Penjualan
+                                    </a>
                                 @endif
-                                <a role="button" href="#" class="btn btn-outline-link btn-block my-3">
-                                    <i class="fa fa-print"></i> Cetak Nota Penjualan
-                                </a>
                             @else
                                 <button type="submit" id="btnPay" class="btn btn-info btn-block my-2">Simpan</button>
                             @endif

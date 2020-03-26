@@ -13,6 +13,10 @@ class CustomersController extends Controller
     {
         $data['customers'] = Customer::latest()->get();
 
+        // dd(getenv("RAJAONGKIR_URL"));
+        // $arrayOfCustomerIds = Customer::all()->pluck('id')->toArray();
+        // dd($arrayOfCustomerIds);
+
         return view('customer.index', $data);
     }
 
@@ -54,7 +58,16 @@ class CustomersController extends Controller
         $data['provinces'] = $rajaongkir->get('province');
         $data['province_name'] = $rajaongkir->get('province?id=' . $customer->province_id)->province;
         $data['cities'] = $rajaongkir->get('city?province=' . $customer->province_id);
+        $postFields = [
+            'origin' => 22, // Kota Bandung
+            'destination' => $customer->city_id,
+            'weight' => 1,
+            'courier' => 'jne',
+        ];
 
+        $rajaongkir = new Rajaongkir;
+        $cost = json_decode($rajaongkir->post('cost', $postFields)->getBody());
+        dd($cost->rajaongkir->results[0]->costs);
         return view('customer.form', $data);
     }
 

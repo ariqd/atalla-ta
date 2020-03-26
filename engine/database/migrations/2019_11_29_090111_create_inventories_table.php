@@ -20,8 +20,9 @@ class CreateInventoriesTable extends Migration
             $table->string('color');
             $table->integer('qty');
             $table->timestamps();
-            
+
             $table->foreign('product_id')->references('id')->on('products');
+            $table->unique(['product_id', 'size', 'color']);
         });
     }
 

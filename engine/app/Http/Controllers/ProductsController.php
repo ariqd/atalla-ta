@@ -21,22 +21,13 @@ class ProductsController extends Controller
         $data['products'] = Product::latest()->get();
         $data['categories'] = $this->categories;
 
-        $product_id = @$_GET['product_id'];
-        if ($product_id) {
-            $product = Product::find($product_id);
-            if ($product) {
+        if (@$_GET['product_id']) {
+            $product = Product::find(@$_GET['product_id']);
+            if ($product)
                 $data['product'] = $product;
-            }
         }
 
         return view('product.index', $data);
-    }
-
-    public function create()
-    {
-        $data['categories'] = $this->categories;
-
-        return view('product.form', $data);
     }
 
     public function store(Request $request)
@@ -60,14 +51,6 @@ class ProductsController extends Controller
         } else {
             return redirect('products')->with('info', 'Produk baru berhasil ditambahkan!');
         }
-    }
-
-    public function edit(Product $product)
-    {
-        $data['product'] = $product;
-        $data['categories'] = $this->categories;
-
-        return view('product.form', $data);
     }
 
     public function update(Request $request, Product $product)

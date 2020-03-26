@@ -19,9 +19,35 @@ class SalesController extends Controller
         'tiki' => 'TIKI',
     ];
 
+    private $months = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+    ];
+
     public function index()
     {
-        $data['sales'] = Purchase::latest()->get();
+        $year = request()->get('y') ?: date('Y');
+        $month = request()->get('m') ?: date('m');
+
+        $data['sales'] = Purchase::latest()
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->get();
+
+        $data['months'] = $this->months;
+
+        $data['year_today'] = $year;
+        $data['month_today'] = $month;
 
         return view('sales.index', $data);
     }
@@ -177,6 +203,15 @@ class SalesController extends Controller
     {
         $sale = Purchase::find($id);
         $sale->status = 'FINISH';
+        $sale->save();
+
+        return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
+    }
+
+    public function makeCancel($id)
+    {
+        $sale = Purchase::find($id);
+        $sale->status = 'CANCEL';
         $sale->save();
 
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');

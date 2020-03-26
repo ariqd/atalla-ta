@@ -18,12 +18,12 @@ class CreatePurchasesTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('sales_id');
             $table->string('purchase_no');
-            $table->string('courier_name');
-            $table->string('courier_service');
-            $table->integer('courier_fee');
+            $table->string('courier_name')->nullable();
+            $table->string('courier_service_name')->nullable();
+            $table->integer('courier_fee')->nullable();
             $table->integer('discount');
             $table->string('status');
-            $table->integer('weight')->default(0);
+            $table->integer('weight')->nullable();
             $table->integer('total');
             $table->timestamps();
 

@@ -16,7 +16,6 @@ class SalesTokoController extends Controller
     public function create()
     {
         $data['stocks'] = Stock::with('product')->available()->latest()->get();
-        $data['customers'] = Customer::latest()->get();
         $counter = Counter::where("name", "=", "SO")->first();
         $data['no_so'] = "SO" . date("ymd") . str_pad(Auth::id(), 2, 0, STR_PAD_LEFT) . str_pad($counter->counter, 5, 0, STR_PAD_LEFT);
 
@@ -27,12 +26,6 @@ class SalesTokoController extends Controller
     {
         $data = $request->all();
 
-        /**
-         * ================================================================================
-         * Cek ketersediaan stok.
-         * Kembali ke halaman sebelumnya jika ada stok yang kurang dari jumlah yang dibeli.
-         * ================================================================================
-         */
         foreach ($data['item'] as $value) {
             $stock = Stock::find($value['id']);
 

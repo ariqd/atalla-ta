@@ -8,8 +8,8 @@ class Product extends Model
 {
     protected $guarded = ['id'];
 
-    public function stocks() 
+    public function stocks()
     {
-        return $this->hasMany('App\Stock');
+        return $this->hasMany('App\Stock', 'product_id');
     }
 }

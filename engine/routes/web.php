@@ -18,6 +18,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('sales/lunas/{id}', 'SalesController@makeLunas');
     Route::get('sales/dikirim/{id}', 'SalesController@makeDikirim');
     Route::get('sales/finish/{id}', 'SalesController@makeFinish');
+    Route::get('sales/cancel/{id}', 'SalesController@makeCancel');
 
     Route::resource('sales-toko', 'SalesTokoController');
     Route::get('sales-toko/search/{id}', 'SalesTokoController@search');

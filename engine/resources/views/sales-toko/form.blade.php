@@ -2,15 +2,12 @@
 
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets') }}/css/datatables.min.css" /> --}}
 @endpush
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.5.7/dist/cleave.min.js"></script>
-
-    {{-- <script src="{{ asset('assets') }}/js/datatables.min.js"></script> --}}
     <script>
         (function ($, window, undefined) {
             'use strict'
@@ -72,12 +69,6 @@
                     return false;
                 }
             });
-
-            // <
-            // blade
-            // if |( % 40! % 24 sale) % 0 D >
-            //     setButtonState(); <
-            // /blade endif|%0D>
 
             $('.select2').select2();
 
@@ -155,15 +146,6 @@
                             $("#qty-" + response.stock.id).val(num);
                             countSubtotal(response.stock.id);
                         }
-                    },
-                    complete: function () {
-                        $('.input-number').cleave({
-                            numeral: true,
-                            delimiter: '.',
-                            numeralDecimalMark: ',',
-                            numeralThousandsGroupStyle: 'thousand',
-                            prefix: 'Rp',
-                        });
                     }
                 });
             });

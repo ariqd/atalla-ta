@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/sales';
+    protected $redirectTo = '/sales';
 
     /**
      * Create a new controller instance.
@@ -40,7 +40,7 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        if ($user->role == 'owner') { // do your magic here
+        if ($user->role == 'owner') {
             return redirect('/');
         }
 

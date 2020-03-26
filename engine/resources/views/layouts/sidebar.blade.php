@@ -6,17 +6,17 @@
 <div class="tb-sidebarheader">
     <div class="tb-sidebarheader-in" data-scrollbar>
         <div class="tb-sidebar-nav">
-            @if (Auth::user()->role == 'owner')
-            <ul class="tb-sidebar-nav-list tb-mp0">
-                <li class="{{ request()->is('/') ? 'active' : '' }}">
-                    <a href="{{ url('/') }}">
-                        <span class="tb-sidebar-link-title">
-                            <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">poll</i></span>
-                            <span class="tb-sidebar-link-text">Dashboard</span>
-                        </span>
-                    </a>
-                </li>
-            </ul><!-- .tb-sidebar-nav-list -->
+            @if(Auth::user()->role == 'owner')
+                <ul class="tb-sidebar-nav-list tb-mp0">
+                    <li class="{{ request()->is('/') ? 'active' : '' }}">
+                        <a href="{{ url('/') }}">
+                            <span class="tb-sidebar-link-title">
+                                <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">poll</i></span>
+                                <span class="tb-sidebar-link-text">Dashboard</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul><!-- .tb-sidebar-nav-list -->
             @endif
             <div class="tb-sidebar-nav-title">
                 <span class="tb-sidebar-nav-title-text">Master Data</span>
@@ -47,16 +47,15 @@
                         </span>
                     </a>
                 </li>
-                @if (Auth::user()->role == 'owner')
-                <li class="{{ request()->is('users*') ? 'active' : '' }}">
-                    <a href="{{ url('users') }}">
-                        <span class="tb-sidebar-link-title">
-                            <span class="tb-sidebar-link-icon"><i
-                                    class="material-icons-outlined">account_circle</i></span>
-                            <span class="tb-sidebar-link-text">Akun</span>
-                        </span>
-                    </a>
-                </li>
+                @if(Auth::user()->role == 'owner')
+                    <li class="{{ request()->is('users*') ? 'active' : '' }}">
+                        <a href="{{ url('users') }}">
+                            <span class="tb-sidebar-link-title">
+                                <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">account_circle</i></span>
+                                <span class="tb-sidebar-link-text">Akun</span>
+                            </span>
+                        </a>
+                    </li>
                 @endif
             </ul><!-- .tb-sidebar-nav-list -->
             <div class="tb-sidebar-nav-title">
@@ -65,7 +64,7 @@
             </div>
             <ul class="tb-sidebar-nav-list tb-mp0">
                 <li class="{{ request()->is('sales') ? 'active' : '' }}">
-                    <a href="{{ url('sales') }}">
+                    <a href="{{ url('sales?m='.date('m').'&y='.date('Y')) }}">
                         <span class="tb-sidebar-link-title">
                             <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">book</i></span>
                             <span class="tb-sidebar-link-text">Semua Nota Penjualan</span>
@@ -83,8 +82,7 @@
                 <li class="{{ request()->is('sales/create') ? 'active' : '' }}">
                     <a href="{{ url('sales/create') }}">
                         <span class="tb-sidebar-link-title">
-                            <span class="tb-sidebar-link-icon"><i
-                                    class="material-icons-outlined">attach_money</i></span>
+                            <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">attach_money</i></span>
                             <span class="tb-sidebar-link-text">Buat Nota Penjualan Distributor / Agen</span>
                         </span>
                     </a>

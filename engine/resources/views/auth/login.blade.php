@@ -30,7 +30,7 @@
                             {{-- <img src="{{ asset('assets') }}/img/signup/signup-logo.png" alt=""> --}}
                         </div>
                         <div class="tb-height-b25 tb-height-lg-b25"></div>
-                        <div class="alert alert-info text-left">
+                        {{-- <div class="alert alert-info text-left">
                             <strong>Owner</strong>
                             <ul>
                                 <li>Email: owner@atalla.com</li>
@@ -41,7 +41,7 @@
                                 <li>Email: sales@atalla.com</li>
                                 <li>Password: password</li>
                             </ul>
-                        </div>
+                        </div> --}}
                         <div class="tb-height-b25 tb-height-lg-b25"></div>
                         @csrf
                         <div class="form-group">

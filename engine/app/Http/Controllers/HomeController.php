@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Charts\ProductsBarChart;
 use App\Stock;
 use App\Purchase;
 use Carbon\Carbon;
@@ -13,27 +14,34 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $productsSoldInThisPeriod = $bestsellers = $dates = $dataset =  $period = [];
+
         $purchasesInThisPeriod = Purchase::with('details.stock.product')
             ->whereMonth('created_at', date('m'))
             ->where('status', 'FINISH');
 
-        $d['current_date'] = Carbon::now();
+        // Total transaksi finish
+        $data['sales_count'] = $purchasesInThisPeriod->count();
 
-        $d['sales_count'] = $purchasesInThisPeriod->count();
+        // Total revenue
+        $data['revenue'] = $purchasesInThisPeriod->sum('total');
 
-        $d['revenue'] = $purchasesInThisPeriod->sum('total');
+        // Jumlah produk terjual
+        $data['products_sold'] = 0;
+        foreach ($purchasesInThisPeriod->get() as $purchases) {
+            $data['products_sold'] += $purchases->details->sum('qty');
+        }
 
-        $d['products_sold'] = 0;
-        $productsSoldInThisPeriod = [];
-        $display = [];
-        $count = 0;
+        // Produk perlu direstock
+        $data['needs_restock'] = Stock::where('qty', '<=', 0)->count();
 
-        $details = Purchase_detail::whereHas('sale', function ($q) {
-            $q->where('status', 'FINISH');
-        })->whereMonth('created_at', date('m'))->get()->sortBy(function ($useritem, $key) {
-            return $useritem->stock->product->code;
+        // START: Top 5 Bestselling Products
+        $details = Purchase_detail::whereHas('sale', function ($purchase) {
+            $purchase->where('status', 'FINISH')->whereYear('created_at', date('Y'))
+                ->whereMonth('created_at', date('m'));
+        })->get()->sortBy(function ($detail) {
+            return $detail->stock->product->code;
         });
-
 
         foreach ($details as $detail) {
             $productsSoldInThisPeriod[] = [
@@ -42,49 +50,100 @@ class HomeController extends Controller
             ];
         }
 
-        foreach ($purchasesInThisPeriod->get() as $purchases) {
-            $d['products_sold'] += $purchases->details->sum('qty');
-        }
-
         foreach ($productsSoldInThisPeriod as $key => $value) {
-            if ($key > 0 && $display[count($display) - 1]['stock'] == $value['stock']) {
-                $display[count($display) - 1]['qty'] += $value['qty'];
+            if ($key > 0 && $bestsellers[count($bestsellers) - 1]['stock'] == $value['stock']) {
+                $bestsellers[count($bestsellers) - 1]['qty'] += $value['qty'];
             } else {
-                $display[] = $value;
+                $bestsellers[] = $value;
             }
         }
 
-        usort($display, function ($item1, $item2) use ($count) {
-            if ($count <= 5) {
-                $count++;
-                return $item2['qty'] <=> $item1['qty'];
-            }
+        usort($bestsellers, function ($item1, $item2) {
+            return $item2['qty'] <=> $item1['qty'];
         });
 
-        $d['bestselling_products'] = array_slice($display, 0, 5);
+        $data['bestselling_products'] = array_slice($bestsellers, 0, 5);
+        // END: Top 5 Bestselling Products
 
-        $d['needs_restock'] = Stock::where('qty', '<=', 0)->count();
+        // START: Transaction & Revenue Charts
+        if (request()->get('period') == 'monthly') {
+            $comparison = Carbon::now()->subYear();
+            $periods = CarbonPeriod::create($comparison, '1 month', Carbon::now());
 
-        /**
-         * ==========================================================================
-         * Transaction Chart
-         * ==========================================================================
-         */
-        $period = CarbonPeriod::create(Carbon::now()->startOfMonth(), Carbon::now());
-
-        $dates = [];
-        $dataset = [];
-        foreach ($period as $date) {
-            $dates[] = $date->toFormattedDateString();
-            $dataset[] = Purchase::whereDate('created_at', '=', $date)
-                ->where('status', 'FINISH')
-                ->sum('total');
+            foreach ($periods as $date) {
+                $period[] = [
+                    'text' => $date->format('M Y'),
+                    'year'  => $date->format('Y'),
+                    'month'  => $date->format('m'),
+                ];
+            }
+        } else {
+            $comparison = Carbon::now()->startOfMonth();
+            $period = CarbonPeriod::create($comparison, Carbon::now());
         }
 
-        $d['transactionsChart'] = new TransactionsChart;
-        $d['transactionsChart']->labels($dates);
-        $d['transactionsChart']->dataset('Transaksi per hari', 'line', $dataset);
+        $data['transactionsChart'] = new TransactionsChart;
+        if (request()->get('chart') == 'jumlah-transaksi') {
+            foreach ($period as $date) {
+                if (request()->get('period') == 'monthly') {
+                    $dates[] = $date['text'];
 
-        return view('home', $d);
+                    $dataset[] = Purchase::whereYear('created_at', $date['year'])
+                        ->whereMonth('created_at', $date['month'])
+                        ->where('status', 'FINISH')
+                        ->count();
+                } else {
+                    $dates[] = $date->toFormattedDateString();
+
+                    $dataset[] = Purchase::whereDate('created_at', $date)
+                        ->where('status', 'FINISH')
+                        ->count();
+                }
+            }
+
+            $data['transactionsChart']->labels($dates);
+            $data['transactionsChart']->dataset('Jumlah Transaksi', 'line', $dataset)
+                ->color('#B388FF')
+                ->backgroundColor('#D1C4E9');
+        } else {
+            foreach ($period as $date) {
+                if (request()->get('period') == 'monthly') {
+                    $dates[] = $date['text'];
+
+                    $dataset[] = Purchase::whereYear('created_at', $date['year'])
+                        ->whereMonth('created_at', $date['month'])
+                        ->where('status', 'FINISH')
+                        ->sum('total');
+                } else {
+                    $dates[] = $date->toFormattedDateString();
+
+                    $dataset[] = Purchase::whereDate('created_at', $date)
+                        ->where('status', 'FINISH')
+                        ->sum('total');
+                }
+            }
+
+            $data['transactionsChart']->labels($dates);
+            $data['transactionsChart']->dataset('Total revenue', 'line', $dataset)
+                ->color('#B388FF')
+                ->backgroundColor('#D1C4E9');
+        }
+        // END: Transaction & Revenue Charts
+
+        // Bestseller Chart
+        $bestSellerLabels = [];
+        $bestSellerDataset = [];
+        foreach ($bestsellers as $bestseller) {
+            $bestSellerLabels[] = $bestseller['stock']->product->code . ' | ' . $bestseller['stock']->size;
+            $bestSellerDataset[] = $bestseller['qty'];
+        }
+
+        $data['productsBarChart'] = new ProductsBarChart;
+        $data['productsBarChart']->labels($bestSellerLabels);
+        $data['productsBarChart']->dataset('Jumlah produk terjual', 'bar', $bestSellerDataset)
+            ->color('#B388FF')
+            ->backgroundColor('#D1C4E9');
+
+        return view('home', $data);
     }
 }
