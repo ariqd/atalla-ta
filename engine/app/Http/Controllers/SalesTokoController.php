@@ -80,11 +80,6 @@ class SalesTokoController extends Controller
         return view('sales-toko.form', $data);
     }
 
-    public function update(Request $request, $id)
-    {
-        dd($request->all());
-    }
-
     public function search($id)
     {
         $data['stock'] = Stock::with('product')->find($id);
@@ -108,10 +103,5 @@ class SalesTokoController extends Controller
         $data = json_decode($cost->getBody());
 
         return response()->json($data, 200);
-    }
-
-    public function deleteDetail($id)
-    {
-        dd($id);
     }
 }

@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Counter;
 use App\Customer;
 use App\Helpers\Rajaongkir;
+use App\Product;
 use App\Purchase;
 use App\Purchase_detail;
 use App\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
 {
@@ -54,7 +56,7 @@ class SalesController extends Controller
 
     public function create()
     {
-        $data['stocks'] = Stock::with('product')->available()->latest()->get();
+        $data['products'] = Product::latest()->get();
 
         $data['customers'] = Customer::latest()->get()->except(1);
 
@@ -70,6 +72,8 @@ class SalesController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
+        // dd($data);
 
         $purchase = Purchase::create([
             'customer_id' => $data['customer_id'],
@@ -90,13 +94,32 @@ class SalesController extends Controller
             $counter->save();
 
             foreach ($data['item'] as $value) {
-                Purchase_detail::create([
-                    'purchase_id' => $purchase->id,
-                    'inventory_id' => $value['id'],
-                    'qty' => $value['qty'],
-                    'status' => 0,
-                    'subtotal' => $value['subtotal']
-                ]);
+                foreach ($value['qty'] as $size => $quantity) {
+                    if ($quantity > 0) {
+                        $stock = Stock::where([
+                            'product_id' => $value['id'],
+                            'color' => $value['color'],
+                            'size' => $size
+                        ])->first();
+
+                        if ($purchase->customer->status == 'Distributor') {
+                            if ($size == 'S' || $size == 'M' || $size == 'L' && $quantity < 2) {
+                                return redirect()->back()->with(
+                                    'info',
+                                    'Produk ' . $stock->product->code . ' dibawah 2. Distributor harus membeli 1 Set S, M, dan L masing-masing 2pcs'
+                                );
+                            }
+                        }
+
+                        Purchase_detail::create([
+                            'purchase_id' => $purchase->id,
+                            'inventory_id' => $stock->id,
+                            'qty' => $quantity,
+                            'status' => 'OK',
+                            'subtotal' => $quantity * $stock->product->price
+                        ]);
+                    }
+                }
             }
 
             return redirect()->back()->with('info', 'Nota penjualan toko berhasil ditambahkan!');
@@ -134,7 +157,9 @@ class SalesController extends Controller
 
     public function search($id)
     {
-        $data['stock'] = Stock::with('product')->find($id);
+        // $data['stock'] = Stock::with('product')->find($id);
+        $data['product'] = Product::with('stocks')->find($id);
+        $data['colors'] = Stock::where('product_id', 1)->get(['color', 'qty'])->groupBy('color')->toArray();
 
         return response()->json($data, 200);
     }

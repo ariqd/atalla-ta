@@ -8,6 +8,15 @@
             text-decoration: none !important;
         }
 
+        .input-group-append {
+            width: 27%;
+        }
+
+        .input-group-append span {
+            width: 100%;
+            overflow: hidden;
+        }
+
     </style>
 @endpush
 
@@ -18,7 +27,12 @@
 
     <script>
         $(document).ready(function () {
+            value = 1;
+            min = 1;
+            count = 0;
+
             $('#weight').prop('readonly', true);
+
             $(window).keydown(function (event) {
                 if (event.keyCode == 13) {
                     event.preventDefault();
@@ -59,11 +73,20 @@
                             $('.loading').hide();
                             if (response.customer.status === 'Distributor') {
                                 $("#discount").val(40);
+                                $("[id^=qty-s-]").val(2);
+                                $("[id^=qty-m-]").val(2);
+                                $("[id^=qty-l-]").val(2);
+                                value = 2;
+                                min = 2;
                             } else {
                                 $("#discount").val(30);
+                                min = 1;
                             }
                             $("#destination").val(response.customer.city_id);
                             countTotal();
+                        },
+                        complete: function () {
+                            $('#search').prop('disabled', false);
                         }
                     });
                 } else {
@@ -94,10 +117,10 @@
                         $('.loading').show();
                     },
                     success: function (response) {
-                        if (document.getElementById('item-id-' + response.stock.id) == null) {
+                        if (document.getElementById('item-id-' + response.product.id) == null) {
                             var table = document.getElementById("tbody");
                             var row = table.insertRow();
-                            row.setAttribute('id', 'item-id-' + response.stock.id);
+                            row.setAttribute('id', 'item-id-' + response.product.id);
 
                             var cell0 = row.insertCell(0);
                             var cell1 = row.insertCell(1);
@@ -105,59 +128,87 @@
                             var cell3 = row.insertCell(3);
                             var cell4 = row.insertCell(4);
                             cell0.setAttribute('style',
-                                'vertical-align:middle;width: 30%;');
+                                'width: 30%;');
                             cell1.setAttribute('style',
-                                'text-align:right;vertical-align:middle;width: 10%;');
+                                'text-align:right;width: 10%;');
                             cell2.setAttribute('style',
-                                'text-align:right;vertical-align:middle;width: 25%;');
+                                'text-align:right;width: 25%;');
                             cell3.setAttribute('style',
-                                'text-align:right;vertical-align:middle;width: 25%;');
+                                'text-align:right;width: 25%;');
                             cell4.setAttribute('style',
-                                'text-align:right;vertical-align:middle;width: 10%;');
+                                'text-align:right;width: 10%;');
 
                             cell0.innerHTML =
-                                '<b>' + response.stock.product.code + '</b><br/>' +
-                                response.stock.product.name + ' ' +
-                                response.stock.color + ' | ' +
-                                response.stock.size + '<br/> ' +
+                                '<b>' + response.product.code + '</b><br/>' +
+                                response.product.name + ' ' +
                                 '<input type="hidden" name="item[' + count + '][id]" value="' +
-                                response.stock.id + '">';
+                                response.product.id + '">';
                             cell1.innerHTML =
-                                '<div class="input-group">' +
-                                '<input type="number" class="form-control" value="1" name="item[' +
-                                count + '][qty]" id="qty-' + response.stock.id +
-                                '" oninput="countSubtotal(' + response.stock.id +
-                                ')" placeholder="' + response.stock.qty +
-                                '"/> <div class="input-group-append"><span class="input-group-text">pcs</span></div></div>';
+                                '<select class="form-control form-control-sm mb-2" id="colors-' +
+                                response.product.id + '" name="item[' + count + '][color]"></select>' +
+                                '<div class="input-group input-group-sm mb-2">' +
+                                '<div class="input-group-append"><span class="input-group-text">XS</span></div>' +
+                                '<input type="number" class="form-control" value="0" name="item[' +
+                                count + '][qty][xs]" id="qty-xs-' + response.product.id +
+                                '" oninput="countSubtotal(' + response.product.id + ')"' +
+                                '/></div>' +
+                                '<div class="input-group input-group-sm mb-2">' +
+                                '<div class="input-group-append"><span class="input-group-text">S</span></div>' +
+                                '<input type="number" class="form-control" min="' + min + '" value="' + value + '" name="item[' +
+                                count + '][qty][s]" id="qty-s-' + response.product.id +
+                                '" oninput="countSubtotal(' + response.product.id + ')"' +
+                                '/></div>' +
+                                '<div class="input-group input-group-sm mb-2">' +
+                                '<div class="input-group-append"><span class="input-group-text">M</span></div>' +
+                                '<input type="number" class="form-control" min="' + min + '" value="' + value + '" name="item[' +
+                                count + '][qty][m]" id="qty-m-' + response.product.id +
+                                '" oninput="countSubtotal(' + response.product.id + ')"' +
+                                '/></div>' +
+                                '<div class="input-group input-group-sm mb-2">' +
+                                '<div class="input-group-append"><span class="input-group-text">L</span></div>' +
+                                '<input type="number" class="form-control" min="' + min + '" value="' + value + '" name="item[' +
+                                count + '][qty][l]" id="qty-l-' + response.product.id +
+                                '" oninput="countSubtotal(' + response.product.id + ')"' +
+                                '/></div>' +
+                                '<div class="input-group input-group-sm mb-2">' +
+                                '<div class="input-group-append"><span class="input-group-text">XL</span></div>' +
+                                '<input type="number" class="form-control" value="0" name="item[' +
+                                count + '][qty][xl]" id="qty-xl-' + response.product.id +
+                                '" oninput="countSubtotal(' + response.product.id + ')"' +
+                                '/></div>';
                             cell2.innerHTML = '<span class="my-2" id="price-text-' +
-                                response.stock.id + '">Rp' + number_format(response.stock
-                                    .product.price, '.', ',', 0) + '</span>' +
+                                response.product.id + '">Rp' + number_format(response.product.price, '.', ',', 0) +
+                                '</span>' +
                                 '<input type="hidden" name="item[' + count +
-                                '][price]" value="' + response.stock.product.price +
-                                '" id="price-' + response.stock.id + '">';
+                                '][price]" value="' + response.product.price +
+                                '" id="price-' + response.product.id + '">';
                             cell3.innerHTML =
                                 '<input type="hidden" class="subtotal" id="subtotal-' +
-                                response.stock.id + '" name="item[' + count +
-                                '][subtotal]" value="' + response.stock.product.price +
+                                response.product.id + '" name="item[' + count +
+                                '][subtotal]" value="' + response.product.price +
                                 '"/>' + '<span class="my-2" id="subtotal-text-' +
-                                response.stock.id + '">Rp' + number_format(response.stock
-                                    .product
+                                response.product.id + '">Rp' + number_format(response.product
                                     .price, '.', ',', 0) + '</span>';
                             cell4.innerHTML =
                                 '<div class="text-center"><a style="cursor:pointer" onclick="voidItem(' +
-                                response.stock.id +
+                                response.product.id +
                                 ')"><i class="fa fa-trash text-danger"></i></a></div>';
+
+                            $.each(response.colors, function (val, i) {
+                                $('#colors-' + response.product.id)
+                                    .append($("<option></option>")
+                                        .attr("value", val)
+                                        .text(val));
+                            });
 
                             count++;
                             setButtonState();
-                            countTotal();
+                            countSubtotal(response.product.id);
                             if (count > 0 && $('#customers').val() != 0) {
                                 $('#couriers').prop('disabled', false);
                             }
                         } else {
-                            var num = +$("#qty-" + response.stock.id).val() + 1;
-                            $("#qty-" + response.stock.id).val(num);
-                            countSubtotal(response.stock.id);
+                            alert('Produk sudah ada di Keranjang Belanja!')
                         }
                     },
                     complete: function () {
@@ -166,8 +217,6 @@
                 });
             });
         });
-
-        var count = 0;
 
         function setButtonState() {
             if (count <= 0) {
@@ -211,7 +260,6 @@
                         allowClear: true,
                         data: $.map(costs, function (item) {
                             return {
-                                // text: item.service + ' - ' + item.description,
                                 text: item.service,
                                 id: item.cost[0].value
                             }
@@ -232,7 +280,13 @@
 
         function countSubtotal(id) {
             var actual_price = parseFloat($("#price-" + id).val()) || 0;
-            var qty = parseFloat($("#qty-" + id).val()) || 0;
+            var xs = parseFloat($("#qty-xs-" + id).val()) || 0;
+            var s = parseFloat($("#qty-s-" + id).val()) || 0;
+            var m = parseFloat($("#qty-m-" + id).val()) || 0;
+            var l = parseFloat($("#qty-l-" + id).val()) || 0;
+            var xl = parseFloat($("#qty-xl-" + id).val()) || 0;
+
+            var qty = (xs + s + m + l + xl) || 0;
 
             if ($("#qty-" + id).val() === "" || qty == 0) {
                 alert('Qty tidak boleh 0 atau kosong!');
@@ -331,12 +385,11 @@
                                 <div class="form-group row">
                                     <label for="search" class="col-sm-3 col-form-label">Cari Kode Produk:</label>
                                     <div class="col-sm-9">
-                                        <select class="form-control select2" name="search" id="search">
+                                        <select class="form-control select2" name="search" id="search" disabled>
                                             <option value="0" selected disabled>- Pilih Produk -</option>
-                                            @foreach($stocks as $stock)
-                                                <option value="{{ $stock->id }}">
-                                                    {{ $stock->product->code }} {{ $stock->product->name }}
-                                                    {{ $stock->color }} | {{ $stock->size }}
+                                            @foreach($products as $product)
+                                                <option value="{{ $product->id }}">
+                                                    {{ $product->code }} {{ $product->name }}
                                                 </option>
                                             @endforeach
                                         </select>

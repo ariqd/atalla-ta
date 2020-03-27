@@ -74,7 +74,7 @@
 
             $('#search').change(function () {
                 $.ajax({
-                    url: "{!! url('sales/search') !!}/" + $("#search").val(),
+                    url: "{!! url('sales-toko/search') !!}/" + $("#search").val(),
                     method: "get",
                     beforeSend: function () {
                         $('.loading').show();
@@ -82,15 +82,15 @@
                     success: function (response) {
                         $('.loading').hide();
                         if (document.getElementById('item-id-' + response.stock.id) == null) {
-                            var table = document.getElementById("tbody");
-                            var row = table.insertRow();
+                            let table = document.getElementById("tbody");
+                            let row = table.insertRow();
                             row.setAttribute('id', 'item-id-' + response.stock.id);
 
-                            var cell0 = row.insertCell(0);
-                            var cell1 = row.insertCell(1);
-                            var cell2 = row.insertCell(2);
-                            var cell3 = row.insertCell(3);
-                            var cell4 = row.insertCell(4);
+                            let cell0 = row.insertCell(0);
+                            let cell1 = row.insertCell(1);
+                            let cell2 = row.insertCell(2);
+                            let cell3 = row.insertCell(3);
+                            let cell4 = row.insertCell(4);
                             cell0.setAttribute('style',
                                 'vertical-align:middle;width: 30%;');
                             cell1.setAttribute('style',
