@@ -9,8 +9,10 @@ use Faker\Generator as Faker;
 
 $factory->define(Purchase::class, function (Faker $faker) {
     $customer = $faker->randomElement(Customer::all());
+
     $courier = $faker->randomElement(['jne', 'pos', 'tiki']);
-    $status = $faker->randomElement(['BELUM LUNAS', 'LUNAS', 'DIKIRIM', 'FINISH', 'CANCEL']);
+
+    // $status = $faker->randomElement(['BELUM LUNAS', 'LUNAS', 'DIKIRIM', 'FINISH', 'CANCEL']);
 
     $postFields = [
         'origin' => 22, // Kota Bandung

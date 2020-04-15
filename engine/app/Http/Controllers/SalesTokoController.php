@@ -32,7 +32,7 @@ class SalesTokoController extends Controller
             if ($stock->qty < $value['qty']) {
                 return redirect()->back()->with(
                     'error',
-                    'Stok produk ' . $stock->product->code . ' tidak cukup untuk menyelesaikan transaksi! Stok tersedia: ' . $stock->qty
+                    'Stok produk "' . $stock->product->code . ' ' . $stock->color . ' ' . $stock->size . '" tidak cukup untuk menyelesaikan transaksi! Stok tersedia: ' . $stock->qty
                 );
             } else {
                 $stock->qty -= $value['qty'];
@@ -92,7 +92,7 @@ class SalesTokoController extends Controller
         $input = $request->all();
 
         $postFields = [
-            'origin' => 23, // Kota Bandung
+            'origin' => 22, // Kota Bandung
             'destination' => $input['destination'],
             'weight' => $input['weight'],
             'courier' => $input['courier'],

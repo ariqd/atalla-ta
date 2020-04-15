@@ -115,7 +115,8 @@
                                 count + '][qty]" id="qty-' + response.stock.id +
                                 '" oninput="countSubtotal(' + response.stock.id +
                                 ')" placeholder="' + response.stock.qty +
-                                '"/> <div class="input-group-append"><span class="input-group-text">pcs</span></div></div>';
+                                '"/> <div class="input-group-append"><span class="input-group-text">pcs</span></div></div>' +
+                                '<small class="text-muted">Stok tersedia: ' + response.stock.qty + '</small>';
                             cell2.innerHTML = '<span class="my-2" id="price-text-' +
                                 response.stock.id + '">Rp' + number_format(response.stock
                                     .product.price, '.', ',', 0) + '</span>' +

@@ -188,7 +188,6 @@
                                         <td>{{ $sale->purchase_no }}</td>
                                         <td>{{ $sale->customer->name }}</td>
                                         <td>
-
                                             @if($sale->customer_id == 1)
                                                 Retail
                                             @else
@@ -211,14 +210,16 @@
                                         <td>
                                             @if($sale->customer_id == 1)
                                                 <a href="{{ route('sales-toko.edit', $sale) }}" class="text-info mr-3">
-                                                    Detail / Edit
+                                                    Detail
                                                 </a>
                                             @else
                                                 @if($sale->status != 'FINISH')
-                                                    <a href="{{ route('sales.edit', $sale) }}" class="text-primary mr-3">Ubah Status</a>
+                                                    <a href="{{ route('sales.edit', $sale) }}" class="text-primary mr-3">
+                                                        Edit
+                                                    </a>
                                                 @else
                                                     <a href="{{ route('sales.edit', $sale) }}" class="text-info mr-3">
-                                                        Detail / Edit
+                                                        Detail
                                                     </a>
                                                 @endif
                                             @endif

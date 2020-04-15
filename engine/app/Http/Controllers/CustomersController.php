@@ -67,7 +67,7 @@ class CustomersController extends Controller
 
         $rajaongkir = new Rajaongkir;
         $cost = json_decode($rajaongkir->post('cost', $postFields)->getBody());
-        dd($cost->rajaongkir->results[0]->costs);
+
         return view('customer.form', $data);
     }
 
@@ -80,7 +80,7 @@ class CustomersController extends Controller
             'address' => ['required', 'string', 'max:255'],
             'province_id' => ['required', 'numeric'],
             'city_id' => ['required', 'numeric'],
-            'phone' => ['required'],
+            'phone' => ['required', 'unique:customers'],
             'status' => ['required'],
         ])->validate();
 

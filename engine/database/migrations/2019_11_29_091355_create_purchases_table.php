@@ -24,7 +24,7 @@ class CreatePurchasesTable extends Migration
             $table->integer('discount');
             $table->string('status');
             $table->integer('weight')->nullable();
-            $table->integer('total');
+            $table->bigInteger('total');
             $table->timestamps();
 
             $table->foreign('customer_id')->references('id')->on('customers');

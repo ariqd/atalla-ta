@@ -9,7 +9,7 @@ $factory->define(Product::class, function (Faker $faker) {
     return [
         'name' => ucfirst($faker->word()),
         'code' => ucfirst($faker->randomLetter()) . '-' . $faker->randomNumber(3),
-        'price' => $faker->numberBetween(100000, 1000000),
+        'price' => $faker->numberBetween(100000, 800000),
         'category' => $faker->randomElement(['Hijab', 'Gamis', 'Blus', 'Rompi', 'Rok'])
     ];
 });

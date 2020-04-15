@@ -73,8 +73,6 @@ class SalesController extends Controller
     {
         $data = $request->all();
 
-        // dd($data);
-
         $purchase = Purchase::create([
             'customer_id' => $data['customer_id'],
             'sales_id' => Auth::id(),
@@ -102,8 +100,13 @@ class SalesController extends Controller
                             'size' => $size
                         ])->first();
 
-                        if ($purchase->customer->status == 'Distributor') {
-                            if ($size == 'S' || $size == 'M' || $size == 'L' && $quantity < 2) {
+                        if ($size == 'S' || $size == 'M' || $size == 'L') {
+                            if ($purchase->customer->status == 'Distributor' && $quantity < 2) {
+                                return redirect()->back()->with(
+                                    'info',
+                                    'Produk ' . $stock->product->code . ' dibawah 2. Distributor harus membeli 1 Set S, M, dan L masing-masing 2pcs'
+                                );
+                            } elseif ($quantity < 1) {
                                 return redirect()->back()->with(
                                     'info',
                                     'Produk ' . $stock->product->code . ' dibawah 2. Distributor harus membeli 1 Set S, M, dan L masing-masing 2pcs'
@@ -131,11 +134,8 @@ class SalesController extends Controller
     public function edit($id)
     {
         $data['sale'] = Purchase::with('details.stock.product')->find($id);
-
         $data['stocks'] = Stock::with('product')->latest()->get();
-
         $data['customers'] = Customer::latest()->get()->except(1);
-
         $data['couriers'] = $this->couriers;
 
         return view('sales.form', $data);
@@ -212,9 +212,11 @@ class SalesController extends Controller
                 $hold = abs($stock->qty - 0);
 
                 $stock->qty_hold += $hold;
+
                 $stock->qty = 0;
 
-                $detail->status = 2;
+                $detail->status = 'HOLD';
+
                 $detail->save();
             }
 

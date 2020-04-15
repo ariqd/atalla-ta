@@ -19,6 +19,7 @@ class ProductsController extends Controller
     public function index()
     {
         $data['products'] = Product::latest()->get();
+
         $data['categories'] = $this->categories;
 
         if (@$_GET['product_id']) {
@@ -33,12 +34,13 @@ class ProductsController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         unset($data['_token']);
 
         Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:255'],
-            'price' => ['required'],
+            'name' => ['required', 'string', 'max:255', 'unique:products'],
+            'code' => ['required', 'string', 'max:255', 'unique:products'],
+            'price' => ['required', 'numeric', 'min:100'],
             'category' => ['required'],
         ])->validate();
 
@@ -60,7 +62,7 @@ class ProductsController extends Controller
         Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255'],
-            'price' => ['required'],
+            'price' => ['required', 'numeric', 'min:100'],
             'category' => ['required'],
         ])->validate();
 

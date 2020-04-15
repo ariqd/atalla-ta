@@ -46,7 +46,7 @@
                 <div class="tb-card tb-style1">
                     <div class="tb-card-heading"></div>
                     <div class="tb-data-table tb-lock-table tb-style1">
-                        <table id="tb-no-locked" class="table row-border order-column dataTable no-footer table-hover" role="grid" aria-describedby="tb-no-locked_info">
+                        <table id="tb-no-locked" class="table row-border order-column dataTable table-hover" role="grid" aria-describedby="tb-no-locked_info">
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc" tabindex="0" aria-controls="tb-no-locked" aria-label="No: activate to sort column descending">No</th>

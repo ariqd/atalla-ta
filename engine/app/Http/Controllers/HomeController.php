@@ -18,6 +18,7 @@ class HomeController extends Controller
 
         $purchasesInThisPeriod = Purchase::with('details.stock.product')
             ->whereMonth('created_at', date('m'))
+            ->whereYear('created_at', date('Y'))
             ->where('status', 'FINISH');
 
         // Total transaksi finish
@@ -133,7 +134,7 @@ class HomeController extends Controller
         // Bestseller Chart
         $bestSellerLabels = [];
         $bestSellerDataset = [];
-        foreach ($bestsellers as $bestseller) {
+        foreach (array_reverse($bestsellers) as $bestseller) {
             $bestSellerLabels[] = $bestseller['stock']->product->code . ' | ' . $bestseller['stock']->size;
             $bestSellerDataset[] = $bestseller['qty'];
         }

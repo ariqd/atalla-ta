@@ -381,7 +381,7 @@
                     {{ @$sale ? method_field('PUT') : '' }}
                     <div class="row">
                         <div class="col-8">
-                            @if(@!$sale)
+                            @if(!@$sale)
                                 <div class="form-group row">
                                     <label for="search" class="col-sm-3 col-form-label">Cari Kode Produk:</label>
                                     <div class="col-sm-9">
@@ -567,11 +567,11 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="col-2">
-                                    <h5>Total:</h5>
+                                <div class="col-5">
+                                    <p><strong>Total (excl. Ongkir):</strong></p>
                                 </div>
-                                <div class="col-10">
-                                    <h5 class="float-right"> Rp
+                                <div class="col-7">
+                                    <h5 class="text-right"> Rp
                                         <span id="grand-total-span">{{ @$sale ? number_format($sale->total, 0, ',', '.') : '-' }}</span>
                                     </h5>
                                     <input type="hidden" id="grand-total-input" name="total">
@@ -592,7 +592,7 @@
                                     <a href="{{ url('sales/lunas/'.@$sale->id) }}" class="btn btn-block btn-success mb-2">
                                         <i class="fa fa-check"></i> Ubah Status Pembelian ke Lunas
                                     </a>
-                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                    <a role="button" href="#" onclick="window.print()" class="btn btn-outline-link btn-block mt-2 mb-3">
                                         <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                     <hr>
@@ -611,7 +611,7 @@
                                     <a href="{{ url('sales/dikirim/'.@$sale->id) }}" class="btn btn-block btn-primary btn- my-2">
                                         <i class="fa fa-check"></i> Barang Dikirim Ke {{ $sale->customer->status }} {{ $sale->customer->name }}
                                     </a>
-                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                    <a role="button" href="#" onclick="window.print()" class="btn btn-outline-link btn-block mt-2 mb-3">
                                         <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                 @elseif(@$sale->status == 'DIKIRIM')
@@ -626,7 +626,7 @@
                                     <a href="{{ url('sales/finish/'.@$sale->id) }}" class="btn btn-block btn-info my-2">
                                         <i class="fa fa-check"></i> Barang Diterima {{ $sale->customer->status }} {{ $sale->customer->name }}
                                     </a>
-                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                    <a role="button" href="#" onclick="window.print()" class="btn btn-outline-link btn-block mt-2 mb-3">
                                         <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                 @elseif(@$sale->status == 'FINISH')
@@ -638,7 +638,7 @@
                                             <span class="tb-badge tb-box-colo1">finish</span>
                                         </div>
                                     </div>
-                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                    <a role="button" href="#" onclick="window.print()" class="btn btn-outline-link btn-block mt-2 mb-3">
                                         <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                 @elseif(@$sale->status == 'CANCEL')
@@ -650,7 +650,7 @@
                                             <span class="tb-badge tb-box-colo7">Cancel</span>
                                         </div>
                                     </div>
-                                    <a role="button" href="#" class="btn btn-outline-link btn-block mt-2 mb-3">
+                                    <a role="button" href="#" onclick="window.print()" class="btn btn-outline-link btn-block mt-2 mb-3">
                                         <i class="fa fa-print"></i> Cetak Nota Penjualan
                                     </a>
                                 @endif
