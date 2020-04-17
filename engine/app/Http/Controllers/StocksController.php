@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
 use App\Stock;
+use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,27 +28,45 @@ class StocksController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         unset($data['_token']);
 
-        $check = Stock::where([
-            'product_id' => $data['product_id'],
-            'size' => $data['size'],
-            'color' => $data['color'],
-        ])->first();
+        Validator::make($data, [
+            'size.xs' => ['numeric', 'min:0'],
+            'size.s' => ['numeric', 'min:0'],
+            'size.m' => ['numeric', 'min:0'],
+            'size.l' => ['numeric', 'min:0'],
+            'size.xl' => ['numeric', 'min:0'],
+        ])->validate();
 
-        if (!$check) {
-            Validator::make($data, [
-                'product_id' => ['required'],
-                'size' => ['required'],
-                'color' => ['required'],
-                'qty' => ['required'],
-            ])->validate();
-
-            Stock::create($data);
-        } else {
-            $check->qty += $data['qty'];
-            $check->save();
+        foreach ($data['size'] as $size => $qty) {
+            Stock::create([
+                'product_id' => $data['product_id'],
+                'color' => $data['color'],
+                'size' => strtoupper($size),
+                'qty' => $qty ?: 0,
+            ]);
         }
+
+        // $check = Stock::where([
+        //     'product_id' => $data['product_id'],
+        //     'size' => $data['size'],
+        //     'color' => $data['color'],
+        // ])->first();
+
+        // if (!$check) {
+        //     Validator::make($data, [
+        //         'product_id' => ['required'],
+        //         'size' => ['required'],
+        //         'color' => ['required'],
+        //         'qty' => ['required'],
+        //     ])->validate();
+
+        //     Stock::create($data);
+        // } else {
+        //     $check->qty += $data['qty'];
+        //     $check->save();
+        // }
 
         return redirect()->back()->with('info', 'Stok Produk baru berhasil ditambahkan!');
     }
@@ -63,18 +81,20 @@ class StocksController extends Controller
         return view('stock.form', $data);
     }
 
-    public function update(Request $request, Stock $stock)
+    public function update(Request $request, Product $product)
     {
         $data = $request->all();
 
-        Validator::make($data, [
-            'product_id' => ['required'],
-            'size' => ['required'],
-            'color' => ['required'],
-            'qty' => ['required'],
-        ])->validate();
+        dd($product);
 
-        $stock->update($data);
+        // Validator::make($data, [
+        //     'product_id' => ['required'],
+        //     'size' => ['required'],
+        //     'color' => ['required'],
+        //     'qty' => ['required'],
+        // ])->validate();
+
+        // $stock->update($data);
 
         return redirect()->back()->with('info', 'Stok Produk berhasil di-update!');
     }

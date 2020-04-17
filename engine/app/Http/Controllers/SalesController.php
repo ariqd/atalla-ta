@@ -157,9 +157,8 @@ class SalesController extends Controller
 
     public function search($id)
     {
-        // $data['stock'] = Stock::with('product')->find($id);
         $data['product'] = Product::with('stocks')->find($id);
-        $data['colors'] = Stock::where('product_id', 1)->get(['color', 'qty'])->groupBy('color')->toArray();
+        $data['colors'] = $data['product']->stocks()->get(['color', 'qty'])->groupBy('color')->toArray();
 
         return response()->json($data, 200);
     }
@@ -203,25 +202,6 @@ class SalesController extends Controller
         $sale = Purchase::find($id);
         $sale->status = 'DIKIRIM';
         $sale->save();
-
-        foreach ($sale->details as $detail) {
-            $stock = Stock::find($detail->inventory_id);
-            $stock->qty -= $detail->qty;
-
-            if ($stock->qty < 0) {
-                $hold = abs($stock->qty - 0);
-
-                $stock->qty_hold += $hold;
-
-                $stock->qty = 0;
-
-                $detail->status = 'HOLD';
-
-                $detail->save();
-            }
-
-            $stock->save();
-        }
 
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
     }

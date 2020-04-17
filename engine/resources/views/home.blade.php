@@ -18,9 +18,9 @@
 
 @section('content')
 <div class="tb-content tb-style1 pb-5">
-    {{-- <div class="tb-height-b30 tb-height-lg-b30"></div> --}}
+    <div class="tb-height-b30 tb-height-lg-b30"></div>
     <div class="container-fluid">
-        {{-- <div class="row">
+        <div class="row">
             <div class="col-lg-12">
                 <div class="tb-sectin-heading tb-style1">
                     <div class="tb-sectin-heading-left">
@@ -30,7 +30,7 @@
                 <div class="tb-height-b10 tb-height-lg-b10"></div>
                 <hr />
             </div>
-        </div> --}}
+        </div>
         <div class="tb-height-b30 tb-height-lg-b30"></div>
         <div class="row">
             <div class="col-lg-3 col-sm-6">

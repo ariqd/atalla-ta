@@ -39,14 +39,14 @@
                         </span>
                     </a>
                 </li>
-                <li class="{{ request()->is('stocks*') ? 'active' : '' }}">
+                {{-- <li class="{{ request()->is('stocks*') ? 'active' : '' }}">
                     <a href="{{ url('stocks') }}">
                         <span class="tb-sidebar-link-title">
                             <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">inbox</i></span>
                             <span class="tb-sidebar-link-text">Stok</span>
                         </span>
                     </a>
-                </li>
+                </li> --}}
                 @if(Auth::user()->role == 'owner')
                     <li class="{{ request()->is('users*') ? 'active' : '' }}">
                         <a href="{{ url('users') }}">

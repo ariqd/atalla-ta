@@ -117,6 +117,7 @@
                         $('.loading').show();
                     },
                     success: function (response) {
+                        // console.log(response);
                         if (document.getElementById('item-id-' + response.product.id) == null) {
                             var table = document.getElementById("tbody");
                             var row = table.insertRow();
@@ -470,6 +471,16 @@
                                         @if(@$sale->discount)
                                             Diskon {{ @$sale->discount }}%
                                         @endif
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-4">
+                                        <label for="customers">Pengiriman</label>
+                                    </div>
+                                    <div class="col-8 text-right">
+                                        <strong>{{ $sale->customer->address }}</strong><br>
+                                        Kota {{ $sale->customer->city_name }} <br>
+                                        Provinsi {{ $sale->customer->province_name }} <br>
                                     </div>
                                 </div>
                             @else

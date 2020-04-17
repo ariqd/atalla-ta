@@ -9,6 +9,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('customers/search-cities/{id}', 'CustomersController@searchCities');
 
     Route::resource('products', 'ProductsController');
+    Route::put('products/update-stock/{product}', 'ProductsController@updateStock')->name('products.update.stock');
     Route::resource('stocks', 'StocksController');
 
     Route::resource('sales', 'SalesController');

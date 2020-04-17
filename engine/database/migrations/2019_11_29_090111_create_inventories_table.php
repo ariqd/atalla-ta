@@ -18,7 +18,7 @@ class CreateInventoriesTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->string('size');
             $table->string('color');
-            $table->integer('qty');
+            $table->integer('qty')->default(0);
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
