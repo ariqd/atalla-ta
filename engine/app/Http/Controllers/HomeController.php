@@ -14,35 +14,26 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $productsSoldInThisPeriod = $bestsellers = $dates = $dataset =  $period = [];
-
         $purchasesInThisPeriod = Purchase::with('details.stock.product')
             ->whereMonth('created_at', date('m'))
-            ->whereYear('created_at', date('Y'))
-            ->where('status', 'FINISH');
-
-        // Total transaksi finish
-        $data['sales_count'] = $purchasesInThisPeriod->count();
-
-        // Total revenue
-        $data['revenue'] = $purchasesInThisPeriod->sum('total');
+            ->whereYear('created_at', date('Y'))->get();
 
         // Jumlah produk terjual
         $data['products_sold'] = 0;
-        foreach ($purchasesInThisPeriod->get() as $purchases) {
+        foreach ($purchasesInThisPeriod as $purchases) {
             $data['products_sold'] += $purchases->details->sum('qty');
         }
+        // END: Jumlah produk terjual
 
-        // Produk perlu direstock
-        $data['needs_restock'] = Stock::where('qty', '<=', 0)->count();
+        $productsSoldInThisPeriod = $bestsellers = $dates = $dataset =  $period = [];
 
         // START: Top 5 Bestselling Products
         $details = Purchase_detail::whereHas('sale', function ($purchase) {
-            $purchase->where('status', 'FINISH')->whereYear('created_at', date('Y'))
-                ->whereMonth('created_at', date('m'));
-        })->get()->sortBy(function ($detail) {
-            return $detail->stock->product->code;
-        });
+            $purchase->where('status', '!=', 'BELUM LUNAS');
+        })->whereYear('created_at', date('Y'))
+            ->whereMonth('created_at', date('m'))->get()->sortBy(function ($detail) {
+                return $detail->stock->product->code;
+            });
 
         foreach ($details as $detail) {
             $productsSoldInThisPeriod[] = [
@@ -63,7 +54,8 @@ class HomeController extends Controller
             return $item2['qty'] <=> $item1['qty'];
         });
 
-        $data['bestselling_products'] = array_slice($bestsellers, 0, 5);
+        $bestsellers = array_slice($bestsellers, 0, 5);
+        $data['bestselling_products'] = $bestsellers;
         // END: Top 5 Bestselling Products
 
         // START: Transaction & Revenue Charts
@@ -84,6 +76,7 @@ class HomeController extends Controller
         }
 
         $data['transactionsChart'] = new TransactionsChart;
+
         if (request()->get('chart') == 'jumlah-transaksi') {
             foreach ($period as $date) {
                 if (request()->get('period') == 'monthly') {
@@ -91,13 +84,13 @@ class HomeController extends Controller
 
                     $dataset[] = Purchase::whereYear('created_at', $date['year'])
                         ->whereMonth('created_at', $date['month'])
-                        ->where('status', 'FINISH')
+                        ->where('status', '!=', 'BELUM LUNAS')
                         ->count();
                 } else {
                     $dates[] = $date->toFormattedDateString();
 
                     $dataset[] = Purchase::whereDate('created_at', $date)
-                        ->where('status', 'FINISH')
+                        ->where('status', '!=', 'BELUM LUNAS')
                         ->count();
                 }
             }
@@ -113,13 +106,13 @@ class HomeController extends Controller
 
                     $dataset[] = Purchase::whereYear('created_at', $date['year'])
                         ->whereMonth('created_at', $date['month'])
-                        ->where('status', 'FINISH')
+                        ->where('status', '!=', 'BELUM LUNAS')
                         ->sum('total');
                 } else {
                     $dates[] = $date->toFormattedDateString();
 
                     $dataset[] = Purchase::whereDate('created_at', $date)
-                        ->where('status', 'FINISH')
+                        ->where('status', '!=', 'BELUM LUNAS')
                         ->sum('total');
                 }
             }
@@ -133,8 +126,10 @@ class HomeController extends Controller
 
         // Bestseller Chart
         $bestSellerLabels = [];
+
         $bestSellerDataset = [];
-        foreach (array_reverse($bestsellers) as $bestseller) {
+
+        foreach ($bestsellers as $bestseller) {
             $bestSellerLabels[] = $bestseller['stock']->product->code . ' | ' . $bestseller['stock']->size;
             $bestSellerDataset[] = $bestseller['qty'];
         }
@@ -145,6 +140,10 @@ class HomeController extends Controller
             ->color('#B388FF')
             ->backgroundColor('#D1C4E9');
 
-        return view('home', $data);
+        return view('home', [
+            'data' => $data,
+            'purchases' => $purchasesInThisPeriod,
+            'restocks' => Stock::where('qty_hold', '>', 0)->get()
+        ]);
     }
 }

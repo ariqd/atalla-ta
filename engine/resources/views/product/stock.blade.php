@@ -50,16 +50,24 @@
                                     {{-- <p class="mb-0 text-muted">Stok | Hold Qty</p> --}}
                                 </div>
                                 @foreach($sizes as $size)
+                                    @php
+                                        $qty = $product->stocks()->where([
+                                        'color' => $color,
+                                        'size' => $size
+                                        ])->first()->qty;
+
+                                        $qty_hold = $product->stocks()->where([
+                                        'color' => $color,
+                                        'size' => $size
+                                        ])->first()->qty_hold;
+                                    @endphp
                                     <div class="col-2 text-center">
                                         <div>
-                                            <h5>{{ $size }}</h5>
-                                            <p class="mb-0">{{ $product->stocks()->where([
-                                                'color' => $color,
-                                                'size' => $size
-                                            ])->first()->qty }} | {{ $product->stocks()->where([
-                                                'color' => $color,
-                                                'size' => $size
-                                            ])->first()->qty_hold }}
+                                            <h5 class="{{ $qty < $qty_hold ? 'text-danger' : ($qty == 0 ? 'text-warning' : '') }}">
+                                                {{ $size }}
+                                            </h5>
+                                            <p class="mb-0">
+                                                <span class="{{ $qty < $qty_hold ? 'text-danger' : ($qty == 0 ? 'text-warning' : 'text-success') }}">{{ $qty }}</span> | {{ $qty_hold }}
                                             </p>
                                         </div>
                                     </div>

@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('sales/dikirim/{id}', 'SalesController@makeDikirim');
     Route::get('sales/finish/{id}', 'SalesController@makeFinish');
     Route::get('sales/cancel/{id}', 'SalesController@makeCancel');
+    Route::delete('sales/delete/detail/{id}', 'SalesController@deleteDetail');
 
     Route::resource('sales-toko', 'SalesTokoController');
     Route::get('sales-toko/search/{id}', 'SalesTokoController@search');

@@ -97,7 +97,7 @@ class ProductsController extends Controller
     {
         $data = $request->all();
 
-        // unset($data['_token'], $data['_method']);
+        // dd($data);
 
         foreach ($data['size'] as $size => $qty) {
             $stock = $product->stocks()->where([
@@ -106,6 +106,7 @@ class ProductsController extends Controller
             ])->first();
 
             $stock->qty = $qty;
+            $stock->qty_hold = $data['hold'][$size];
 
             $stock->save();
         }

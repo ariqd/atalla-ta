@@ -194,6 +194,25 @@ class SalesController extends Controller
         $sale->status = 'LUNAS';
         $sale->save();
 
+        foreach ($sale->details as $detail) {
+            $stock = Stock::find($detail->inventory_id);
+            $stock->qty -= $detail->qty;
+
+            if ($stock->qty < 0) {
+                $hold = abs($stock->qty - 0);
+
+                $stock->qty_hold += $hold;
+
+                $stock->qty = 0;
+
+                $detail->status = 'HOLD';
+
+                $detail->save();
+            }
+
+            $stock->save();
+        }
+
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
     }
 
@@ -222,5 +241,14 @@ class SalesController extends Controller
         $sale->save();
 
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');
+    }
+
+    public function deleteDetail($id)
+    {
+        $stock = Stock::find($id);
+
+        $stock->delete();
+
+        return redirect()->back()->with('info', 'Detail penjualan berhasil diubah!');
     }
 }

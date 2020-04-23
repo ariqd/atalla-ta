@@ -17,6 +17,11 @@
             overflow: hidden;
         }
 
+        .text-atalla {
+            color: #5856d6;
+            /* font-weight: bold; */
+        }
+
     </style>
 @endpush
 
@@ -27,6 +32,26 @@
 
     <script>
         $(document).ready(function () {
+            $('.btnDelete').on('click', function (e) {
+                e.preventDefault();
+                const parent = $(this).parent();
+                const id = $(this).data('id');
+
+                Swal.fire({
+                        title: "Apa anda yakin?",
+                        text: "Data akan terhapus secara permanen!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then(function (willDelete) {
+                        console.log(willDelete)
+                        if (willDelete) {
+                            parent.find('.formDelete-' + id).submit();
+                        }
+                    });
+            });
+
             value = 1;
             min = 1;
             count = 0;
@@ -414,9 +439,9 @@
                                                 <th class="sorting" tabindex="0" aria-controls="tb-no-locked" aria-label="Total: activate to sort column ascending" style="text-align:right;width: 25%">
                                                     Total
                                                 </th>
-                                                @if(!@$sale)
-                                                    <th class="sorting" tabindex="0" aria-controls="tb-no-locked" aria-label="Action: activate to sort column ascending" style="text-align:right;width: 5%"></th>
-                                                @endif
+                                                {{-- @if(!@$sale) --}}
+                                                <th class="sorting" tabindex="0" aria-controls="tb-no-locked" aria-label="Action: activate to sort column ascending" style="text-align:center;width: 5%"></th>
+                                                {{-- @endif --}}
                                             </tr>
                                         </thead>
                                         <tbody id="tbody">
@@ -440,6 +465,9 @@
                                                             @else
                                                                 <span class="text-right">
                                                                     <strong>{{ $detail->qty }} pcs</strong>
+                                                                    @if(@$sale->status == 'BELUM LUNAS')
+                                                                        <p class="{{ $detail->stock->qty <= $detail->qty ? 'text-danger' : 'text-success' }}">Available: {{ $detail->stock->qty }} pcs</p>
+                                                                    @endif
                                                                 </span>
                                                             @endif
                                                         </td>
@@ -450,6 +478,15 @@
                                                         <td class="align-middle text-right" style="width: 25%">
                                                             <span id="subtotal-text-{{ $detail->id }}">Rp{{ number_format($detail->subtotal, 0, ',', '.') }}</span>
                                                             <input type="hidden" class="form-control subtotal" id="subtotal-{{ $detail->id }}" value="{{ $detail->subtotal }}" name="item[{{ $key }}][subtotal]" readonly>
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                            {{-- <a href="#" class="text-atalla btnDelete" data-id="{{ $detail->id }}">
+                                                            Hapus
+                                                            </a>
+                                                            <form action="{{ url('sales/delete/detail/'.$detail->id) }}" method="post" class="formDelete-{{ $detail->id }} d-none">
+                                                                {!! csrf_field() !!}
+                                                                {!! method_field('delete') !!}
+                                                            </form> --}}
                                                         </td>
                                                     </tr>
                                                 @endforeach

@@ -94,12 +94,20 @@
       <path value="$PROJECT_DIR$/engine/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/engine/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/engine/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/engine/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/engine/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/engine/vendor/consoletvs/charts" />
+      <path value="$PROJECT_DIR$/engine/vendor/phenx/php-svg-lib" />
+      <path value="$PROJECT_DIR$/engine/vendor/phenx/php-font-lib" />
+      <path value="$PROJECT_DIR$/engine/vendor/balping/json-raw-encoder" />
+      <path value="$PROJECT_DIR$/engine/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/engine/vendor/sabberworm/php-css-parser" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings load_method="CUSTOM_LOADER" custom_loader_path="$PROJECT_DIR$/engine/vendor/autoload.php" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/engine/vendor/autoload.php" />
     </phpunit_settings>
   </component>
 </project>
