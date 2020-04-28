@@ -32,14 +32,14 @@
     <div class="container-fluid">
         @include('layouts.feedback')
         <div class="row">
-            <div class="col-3">
+            <div class="col-4">
                 @if(request()->get('edit'))
                     @include('product.stock-edit')
                 @else
                     @include('product.stock-form')
                 @endif
             </div>
-            <div class="col-9">
+            <div class="col-8">
                 @forelse($colors as $color)
                     <div class="card mb-3">
                         <div class="card-body">

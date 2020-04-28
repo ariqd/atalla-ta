@@ -31,5 +31,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('users', 'UsersController');
     Route::post('users/change-password/{id}', 'UsersController@changePassword');
 
+    Route::get('settings', 'SettingsController@index')->name('setting.index');
+    Route::post('settings', 'SettingsController@update')->name('setting.update');
+
     // Route::get('sales-toko', 'SalesTokoController@create');
 });

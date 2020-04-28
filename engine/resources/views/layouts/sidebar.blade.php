@@ -39,14 +39,6 @@
                         </span>
                     </a>
                 </li>
-                {{-- <li class="{{ request()->is('stocks*') ? 'active' : '' }}">
-                    <a href="{{ url('stocks') }}">
-                        <span class="tb-sidebar-link-title">
-                            <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">inbox</i></span>
-                            <span class="tb-sidebar-link-text">Stok</span>
-                        </span>
-                    </a>
-                </li> --}}
                 @if(Auth::user()->role == 'owner')
                     <li class="{{ request()->is('users*') ? 'active' : '' }}">
                         <a href="{{ url('users') }}">
@@ -87,6 +79,17 @@
                         </span>
                     </a>
                 </li>
+                @if(Auth::user()->role == 'owner')
+                    <br>
+                    <li class="{{ request()->is('settings*') ? 'active' : '' }}">
+                        <a href="{{ url('settings') }}">
+                            <span class="tb-sidebar-link-title">
+                                <span class="tb-sidebar-link-icon"><i class="material-icons-outlined">settings</i></span>
+                                <span class="tb-sidebar-link-text">Settings</span>
+                            </span>
+                        </a>
+                    </li>
+                @endif
             </ul><!-- .tb-sidebar-nav-list -->
         </div>
     </div>

@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="form-group row">
-        <label for="size_xs" class="col-form-label col-4">Qty Size XS</label>
+        <label for="size_xs" class="col-form-label col-4">Qty XS</label>
         <div class="col-8">
             <input type="text" class="form-control" name="size[xs]" id="size_xs" value="{{ $edit['XS'][0]['qty'] }}">
         </div>
@@ -20,7 +20,7 @@
     </div>
     <hr>
     <div class="mt-3 form-group row">
-        <label for="size_s" class="col-form-label col-4">Qty Size S</label>
+        <label for="size_s" class="col-form-label col-4">Qty S</label>
         <div class="col-8">
             <input type="text" class="form-control" name="size[s]" id="size_s" value="{{ $edit['S'][0]['qty'] }}">
         </div>
@@ -31,7 +31,7 @@
     </div>
     <hr>
     <div class="mt-3 form-group row">
-        <label for="size_m" class="col-form-label col-4">Qty Size M</label>
+        <label for="size_m" class="col-form-label col-4">Qty M</label>
         <div class="col-8">
             <input type="text" class="form-control" name="size[m]" id="size_m" value="{{ $edit['M'][0]['qty'] }}">
         </div>
@@ -42,7 +42,7 @@
     </div>
     <hr>
     <div class="mt-3 form-group row">
-        <label for="size_l" class="col-form-label col-4">Qty Size L</label>
+        <label for="size_l" class="col-form-label col-4">Qty L</label>
         <div class="col-8">
             <input type="text" class="form-control" name="size[l]" id="size_l" value="{{ $edit['L'][0]['qty'] }}">
         </div>
@@ -53,7 +53,7 @@
     </div>
     <hr>
     <div class="mt-3 form-group row">
-        <label for="size_xl" class="col-form-label col-4">Qty Size XL</label>
+        <label for="size_xl" class="col-form-label col-4">Qty XL</label>
         <div class="col-8">
             <input type="text" class="form-control" name="size[xl]" id="size_xl" value="{{ $edit['XL'][0]['qty'] }}">
         </div>

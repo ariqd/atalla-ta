@@ -9,11 +9,31 @@
 
         .text-atalla {
             color: #5856d6;
-            font-weight: bold;
+            /* font-weight: bold; */
         }
 
         .hover:hover {
             color: #5856d6;
+        }
+
+        #red {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: red;
+            display: inline-block;
+        }
+
+        #green {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: green;
+            display: inline-block;
         }
 
     </style>
@@ -27,7 +47,7 @@
 
 @section('content')
 <div class="tb-content tb-style1 pb-5">
-    <div class="tb-height-b30 tb-height-lg-b30"></div>
+    <div class="tb-height-b10 tb-height-lg-b10"></div>
     <div class="container-fluid">
         <div class="form-row">
             <div class="col-lg-12">
@@ -35,8 +55,39 @@
                     <div class="tb-sectin-heading-left">
                         <h2 class="tb-section-title">Dashboard</h2>
                     </div>
+                    <div class="tb-sectin-heading-center text-center">
+                        <div class="d-flex pb-3">
+                            <div class="ml-3">
+                                <div id="green"></div> Mencapai Target
+                            </div>
+                            <div class="ml-3">
+                                <div id="red"></div> Dibawah Target
+                            </div>
+                        </div>
+                    </div>
                     <div class="tb-sectin-heading-right">
-                        <h5 class="text-muted">{{ date('F Y') }}</h5>
+                        <div>
+                            <form class="form-inline" method="GET">
+                                <label class="my-1 mr-2" for="m">Periode:</label>
+
+                                <select class="custom-select my-1 mr-sm-2" id="m" name="m">
+                                    @foreach($months as $month)
+                                        <option value="{{ $loop->iteration }}" {{ $loop->iteration == $month_today ? 'selected' : '' }}>
+                                            {{ $month }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <select class="custom-select my-1 mr-sm-2" id="y" name="y">
+                                    @for($year = date('Y'); $year >= 2019; $year--)
+                                        <option value="{{ $year }}" {{ $year == $year_today ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endfor
+                                </select>
+
+                                <button type="submit" class="btn btn-info btn-sm my-1">Cari</button>
+                                <a href="{{ url('/') }}" class="btn btn-link btn-sm my-1">Reset</a>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div class="tb-height-b10 tb-height-lg-b10"></div>
@@ -49,12 +100,14 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text hover">
+                                <div class="tb-iconbox-sub-heading hover pb-2"><strong>Transaksi Finish / Total Transaksi</strong></div>
                                 <h4>
                                     <span class="{{ $purchases->where('status', '=', 'FINISH')->count() < $purchases->count() ? 'text-danger' : 'text-success' }}">
                                         {{ $purchases->where('status', '=', 'FINISH')->count() }}
                                     </span>
-                                    / <small>{{ $purchases->count() }}</h4></small>
-                                <div class="tb-iconbox-sub-heading hover">Transaksi Finish Bulan Ini</div>
+                                    / <small>{{ $purchases->count() }}</small>
+                                    ({{ round($purchases->where('status', '=', 'FINISH')->count() / $purchases->count() * 100, 2) }} %)
+                                </h4>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
                             </div>
@@ -68,14 +121,14 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
-                                <h5>
-                                    <span class="{{ $purchases->where('status', '!=', 'BELUM LUNAS')->sum('total') <= 100000000 ? 'text-danger' : 'text-success' }}">
-                                        Rp {{ number_format($purchases->where('status', '!=', 'BELUM LUNAS')->sum('total'), 0, ',', '.') }}
-                                    </span> / Rp 100.000.000
-                                </h5>
-                                <div class="tb-iconbox-sub-heading pt-1">
-                                    Revenue Bulan Ini dari Transaksi Lunas
+                                <div class="tb-iconbox-sub-heading pb-2">
+                                    <strong>Revenue</strong> / Target
                                 </div>
+                                <h5>
+                                    <span class="{{ $purchases->where('status', '!=', 'BELUM LUNAS')->sum('total') <= $setting['target_revenue']->value ? 'text-danger' : 'text-success' }}">
+                                        Rp {{ number_format($purchases->where('status', '!=', 'BELUM LUNAS')->sum('total'), 0, ',', '.') }}
+                                    </span> / Rp {{ number_format($setting['target_revenue']->value, 0, ',', '.') }}
+                                </h5>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
                             </div>
@@ -90,11 +143,13 @@
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
                                 <h4>
-                                    <span class="{{ $data['products_sold'] <= 200 ? 'text-danger' : 'text-success' }}">
+                                    <span class="{{ $data['products_sold'] <= $setting['target_products_sold']->value ? 'text-danger' : 'text-success' }}">
                                         {{ $data['products_sold'] }}
-                                    </span> / 200
+                                    </span> / {{ number_format($setting['target_products_sold']->value, 0, ',', '.') }}
                                 </h4>
-                                <div class="tb-iconbox-sub-heading">Produk Terjual Bulan Ini dari Transaksi Lunas</div>
+                                <div class="tb-iconbox-sub-heading">
+                                    <strong>Produk Terjual</strong> / Target
+                                </div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
                             </div>
@@ -110,7 +165,9 @@
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
                                 <h4>{{ $restocks->count() }}</h4>
-                                <div class="tb-iconbox-sub-heading hover">Produk Perlu di-<i>Restock</i></div>
+                                <div class="tb-iconbox-sub-heading hover">
+                                    <strong>Produk Perlu di-<i>Restock</i></strong>
+                                </div>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
                                 <hr />
                             </div>
@@ -153,7 +210,7 @@
                                             <strong>{{ $restock->qty_hold }} pcs</strong>
                                         </td>
                                     </tr>
-                                    @empty
+                                @empty
                                     <tr>
                                         <td colspan="3" class="text-center text-secondary">Tidak ada produk yang harus di-restock</td>
                                     </tr>

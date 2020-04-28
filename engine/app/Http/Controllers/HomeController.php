@@ -8,15 +8,35 @@ use App\Purchase;
 use Carbon\Carbon;
 use App\Charts\TransactionsChart;
 use App\Purchase_detail;
+use App\Setting;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 
 class HomeController extends Controller
 {
+    private $months = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+    ];
+
     public function index()
     {
+        $year = request()->get('y') ?: date('Y');
+        $month = request()->get('m') ?: date('m');
+
         $purchasesInThisPeriod = Purchase::with('details.stock.product')
-            ->whereMonth('created_at', date('m'))
-            ->whereYear('created_at', date('Y'))->get();
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)->get();
 
         // Jumlah produk terjual
         $data['products_sold'] = 0;
@@ -28,12 +48,13 @@ class HomeController extends Controller
         $productsSoldInThisPeriod = $bestsellers = $dates = $dataset =  $period = [];
 
         // START: Top 5 Bestselling Products
-        $details = Purchase_detail::whereHas('sale', function ($purchase) {
-            $purchase->where('status', '!=', 'BELUM LUNAS');
-        })->whereYear('created_at', date('Y'))
-            ->whereMonth('created_at', date('m'))->get()->sortBy(function ($detail) {
-                return $detail->stock->product->code;
-            });
+        $details = Purchase_detail::whereHas('sale', function ($purchase) use ($month, $year) {
+            $purchase->where('status', '!=', 'BELUM LUNAS')
+                ->whereMonth('created_at', $month)
+                ->whereYear('created_at', $year);
+        })->get()->sortBy(function ($detail) {
+            return $detail->stock->product->code;
+        });
 
         foreach ($details as $detail) {
             $productsSoldInThisPeriod[] = [
@@ -59,9 +80,11 @@ class HomeController extends Controller
         // END: Top 5 Bestselling Products
 
         // START: Transaction & Revenue Charts
+        $now = CarbonImmutable::createFromDate($year, $month);
+        // dd($now);
         if (request()->get('period') == 'monthly') {
-            $comparison = Carbon::now()->subYear();
-            $periods = CarbonPeriod::create($comparison, '1 month', Carbon::now());
+            $comparison = $now->subYear();
+            $periods = CarbonPeriod::create($comparison, '1 month', $now);
 
             foreach ($periods as $date) {
                 $period[] = [
@@ -71,8 +94,8 @@ class HomeController extends Controller
                 ];
             }
         } else {
-            $comparison = Carbon::now()->startOfMonth();
-            $period = CarbonPeriod::create($comparison, Carbon::now());
+            $comparison = $now->startOfMonth();
+            $period = CarbonPeriod::create($comparison, $now);
         }
 
         $data['transactionsChart'] = new TransactionsChart;
@@ -98,7 +121,8 @@ class HomeController extends Controller
             $data['transactionsChart']->labels($dates);
             $data['transactionsChart']->dataset('Jumlah Transaksi', 'line', $dataset)
                 ->color('#B388FF')
-                ->backgroundColor('#D1C4E9');
+                ->backgroundColor('#D1C4E9')
+                ->lineTension(0);
         } else {
             foreach ($period as $date) {
                 if (request()->get('period') == 'monthly') {
@@ -120,7 +144,8 @@ class HomeController extends Controller
             $data['transactionsChart']->labels($dates);
             $data['transactionsChart']->dataset('Total revenue', 'line', $dataset)
                 ->color('#B388FF')
-                ->backgroundColor('#D1C4E9');
+                ->backgroundColor('#D1C4E9')
+                ->lineTension(0);
         }
         // END: Transaction & Revenue Charts
 
@@ -138,12 +163,19 @@ class HomeController extends Controller
         $data['productsBarChart']->labels($bestSellerLabels);
         $data['productsBarChart']->dataset('Jumlah produk terjual', 'bar', $bestSellerDataset)
             ->color('#B388FF')
-            ->backgroundColor('#D1C4E9');
+            ->backgroundColor('#D1C4E9')
+            ->lineTension(0);
+
+        // dd(Setting::all()->keyBy('key'));
 
         return view('home', [
             'data' => $data,
             'purchases' => $purchasesInThisPeriod,
-            'restocks' => Stock::where('qty_hold', '>', 0)->get()
+            'restocks' => Stock::where('qty_hold', '>', 0)->get(),
+            'setting' => Setting::all()->keyBy('key'),
+            'month_today' => $month,
+            'year_today' => $year,
+            'months' => $this->months,
         ]);
     }
 }

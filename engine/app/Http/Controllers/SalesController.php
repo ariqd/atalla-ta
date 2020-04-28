@@ -56,7 +56,7 @@ class SalesController extends Controller
 
     public function create()
     {
-        $data['products'] = Product::latest()->get();
+        $data['products'] = Product::has('stocks')->latest()->get();
 
         $data['customers'] = Customer::latest()->get()->except(1);
 
