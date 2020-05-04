@@ -27,7 +27,7 @@ $factory->define(Purchase::class, function (Faker $faker) {
 
     $service = $faker->randomElement($cost->rajaongkir->results[0]->costs);
 
-    $date = $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = null);
+    $date = $faker->dateTimeBetween($startDate = 'now', $endDate = '+1 month', $timezone = null);
 
     return [
         'customer_id' => $customer->id,

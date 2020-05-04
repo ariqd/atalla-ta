@@ -166,16 +166,17 @@ class HomeController extends Controller
             ->backgroundColor('#D1C4E9')
             ->lineTension(0);
 
-        // dd(Setting::all()->keyBy('key'));
+        // dd($bestsellers);
 
         return view('home', [
             'data' => $data,
             'purchases' => $purchasesInThisPeriod,
-            'restocks' => Stock::where('qty_hold', '>', 0)->get(),
+            'restocks' => Stock::where('qty_hold', '>', 0)->orWhereColumn('qty', '<=', 'safety')->get(),
             'setting' => Setting::all()->keyBy('key'),
             'month_today' => $month,
             'year_today' => $year,
             'months' => $this->months,
+            'bestsellers' => $bestsellers
         ]);
     }
 }

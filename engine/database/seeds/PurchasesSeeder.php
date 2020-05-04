@@ -11,8 +11,8 @@ class PurchasesSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Purchase::class, 20)->create()->each(function ($purchase) {
-            $details = factory(\App\Purchase_detail::class, 5)->make();
+        factory(App\Purchase::class, 50)->create()->each(function ($purchase) {
+            $details = factory(\App\Purchase_detail::class, 3)->make();
 
             foreach ($details as $detail) {
                 $purchase->total += $detail->subtotal;

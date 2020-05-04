@@ -47,7 +47,6 @@
                                 <div class="col-2">
                                     <h5>{{ $color['color'] }}</h5>
                                     <a href="{{ url('products/'.$product->id.'?edit='.$color['color']) }}" class="text-info">Edit</a>
-                                    {{-- <p class="mb-0 text-muted">Stok | Hold Qty</p> --}}
                                 </div>
                                 @foreach($sizes as $size)
                                     @php
@@ -59,15 +58,22 @@
                                         $qty_hold = $product->stocks()->where([
                                         'color' => $color,
                                         'size' => $size
-                                        ])->first()->qty_hold;
+                                        ])->first()->qty_hold;                                        
+
+                                        $safety = $product->stocks()->where([
+                                        'color' => $color,
+                                        'size' => $size
+                                        ])->first()->safety;
                                     @endphp
                                     <div class="col-2 text-center">
                                         <div>
-                                            <h5 class="{{ $qty < $qty_hold ? 'text-danger' : ($qty == 0 ? 'text-warning' : '') }}">
+                                            <h5 class="{{ $qty < $qty_hold ? 'text-danger' : ($qty <= $safety ? 'text-warning' : '') }}">
                                                 {{ $size }}
                                             </h5>
                                             <p class="mb-0">
-                                                <span class="{{ $qty < $qty_hold ? 'text-danger' : ($qty == 0 ? 'text-warning' : 'text-success') }}">{{ $qty }}</span> | {{ $qty_hold }}
+                                                <span title="Qty" class="{{ $qty < $qty_hold ? 'text-danger' : ($qty <= $safety ? 'text-warning' : 'text-success') }}">{{ $qty }}</span> 
+                                                | <span title="Safety Stock">{{ $safety }}</span>
+                                                | <span title="Hold Qty">{{ $qty_hold }}</span>
                                             </p>
                                         </div>
                                     </div>

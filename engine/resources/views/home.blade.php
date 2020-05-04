@@ -52,18 +52,18 @@
         <div class="form-row">
             <div class="col-lg-12">
                 <div class="tb-sectin-heading tb-style1">
-                    <div class="tb-sectin-heading-left">
+                    <div class="tb-sectin-heading-left d-flex">
                         <h2 class="tb-section-title">Dashboard</h2>
+                        {{-- <div class="d-flex"> --}}
+                        <div class="ml-3">
+                            <div id="green"></div> Mencapai Target
+                        </div>
+                        <div class="ml-3">
+                            <div id="red"></div> Dibawah Target
+                        </div>
+                        {{-- </div> --}}
                     </div>
                     <div class="tb-sectin-heading-center text-center">
-                        <div class="d-flex pb-3">
-                            <div class="ml-3">
-                                <div id="green"></div> Mencapai Target
-                            </div>
-                            <div class="ml-3">
-                                <div id="red"></div> Dibawah Target
-                            </div>
-                        </div>
                     </div>
                     <div class="tb-sectin-heading-right">
                         <div>
@@ -106,9 +106,9 @@
                                         {{ $purchases->where('status', '=', 'FINISH')->count() }}
                                     </span>
                                     / <small>{{ $purchases->count() }}</small>
-                                    ({{ round($purchases->where('status', '=', 'FINISH')->count() / $purchases->count() * 100, 2) }} %)
+                                    {{-- ({{ round($purchases->where('status', '=', 'FINISH')->count() / $purchases->count() * 100, 2) }} %) --}}
                                 </h4>
-                                <div class="tb-height-b25 tb-height-lg-b25"></div>
+                                <div class="tb-height-b20 tb-height-lg-b20"></div>
                                 <hr />
                             </div>
                         </div>
@@ -142,15 +142,15 @@
                         <div class="tb-height-b30 tb-height-lg-b30"></div>
                         <div class="tb-iconbox tb-style1">
                             <div class="tb-iconbox-text">
+                                <div class="tb-iconbox-sub-heading pb-2">
+                                    <strong>Produk Terjual</strong> / Target
+                                </div>
                                 <h4>
                                     <span class="{{ $data['products_sold'] <= $setting['target_products_sold']->value ? 'text-danger' : 'text-success' }}">
                                         {{ $data['products_sold'] }}
                                     </span> / {{ number_format($setting['target_products_sold']->value, 0, ',', '.') }}
                                 </h4>
-                                <div class="tb-iconbox-sub-heading">
-                                    <strong>Produk Terjual</strong> / Target
-                                </div>
-                                <div class="tb-height-b25 tb-height-lg-b25"></div>
+                                <div class="tb-height-b20 tb-height-lg-b20"></div>
                                 <hr />
                             </div>
                         </div>
@@ -189,6 +189,7 @@
                                 <tr>
                                     <th>Produk</th>
                                     <th>Qty</th>
+                                    <th>Safety</th>
                                     <th>Hold Qty</th>
                                 </tr>
                             </thead>
@@ -206,7 +207,10 @@
                                         <td class="align-middle">
                                             <strong>{{ $restock->qty }} pcs</strong>
                                         </td>
-                                        <td class="align-middle text-danger">
+                                        <td class="align-middle {{ $restock->qty <= $restock->safety ? 'text-warning' : '' }}">
+                                            <strong>{{ $restock->safety }} pcs</strong>
+                                        </td>
+                                        <td class="align-middle {{ $restock->qty < $restock->qty_hold ? 'text-danger' : '' }}">
                                             <strong>{{ $restock->qty_hold }} pcs</strong>
                                         </td>
                                     </tr>
@@ -223,15 +227,16 @@
                     </div>
                 </div>
             </div>
-
         </div>
-        <div class="form-row my-2">
 
+        <div class="form-row my-2">
             <div class="col-lg-4 col-md-12">
                 <div class="card">
-                    {{-- <div class="card-header"><strong>Produk Terlaris</strong></div> --}}
                     <div class="card-body">
-                        <h6 class="card-title text-atalla">Produk Terlaris</h6>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="card-title text-atalla">Produk Terlaris</h6>
+                            <a href="#" data-toggle="modal" data-target="#bestseller">Details</a>
+                        </div>
                         <div class="w-100 pt-1">
                             {!! $data['productsBarChart']->container() !!}
                         </div>
@@ -249,6 +254,57 @@
                         @endif
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="bestseller" tabindex="-1" role="dialog" aria-labelledby="bestsellerLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bestsellerLabel">Detail Produk Terlaris</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th>Pcs Terjual Bulan Ini</th>
+                        <th>Action</th>
+                        {{-- <th>Hold Qty</th> --}}
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($bestsellers as $bestseller)
+                        <tr>
+                            <td class="align-middle">
+                                <a href="{{ url('products/'.$bestseller['stock']->product->id) }}">
+                                    <span class="text-atalla">{{ $bestseller['stock']->product->code }}</span>
+                                </a>
+                                <br>
+                                {{ $bestseller['stock']->product->name }}
+                                {{ $bestseller['stock']->color }} | {{ $bestseller['stock']->size }}
+                            </td>
+                            <td class="align-middle">
+                                <strong>{{ $bestseller['qty'] }} pcs</strong>
+                            </td>
+                            <td class="align-middle">
+                                <a href="{{ url('products/'.$bestseller['stock']->product->id) }}" class="btn btn-info btn-sm">
+                                    Edit Safety Stock
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary">Tidak ada produk bestseller</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

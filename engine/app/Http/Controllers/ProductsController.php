@@ -97,8 +97,6 @@ class ProductsController extends Controller
     {
         $data = $request->all();
 
-        // dd($data);
-
         foreach ($data['size'] as $size => $qty) {
             $stock = $product->stocks()->where([
                 'color' => $data['color'],
@@ -107,6 +105,7 @@ class ProductsController extends Controller
 
             $stock->qty = $qty;
             $stock->qty_hold = $data['hold'][$size];
+            $stock->safety = $data['safety'][$size];
 
             $stock->save();
         }
