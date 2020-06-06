@@ -15,24 +15,27 @@ use Carbon\CarbonPeriod;
 class HomeController extends Controller
 {
     private $months = [
-        'Januari',
-        'Februari',
-        'Maret',
-        'April',
-        'Mei',
-        'Juni',
-        'Juli',
-        'Agustus',
-        'September',
-        'Oktober',
-        'November',
-        'Desember',
+        '1' => 'Januari',
+        '2' => 'Februari',
+        '3' => 'Maret',
+        '4' => 'April',
+        '5' => 'Mei',
+        '6' => 'Juni',
+        '7' => 'Juli',
+        '8' => 'Agustus',
+        '9' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Desember',
     ];
 
     public function index()
     {
         $year = request()->get('y') ?: date('Y');
-        $month = request()->get('m') ?: date('m');
+        $month = request()->get('m') ?: date('n');
+
+        $year_from = request()->get('y_from') ?: date('Y');
+        $month_from = request()->get('m_from') ?: date('n');
 
         $purchasesInThisPeriod = Purchase::with('details.stock.product')
             ->whereMonth('created_at', $month)
@@ -81,10 +84,10 @@ class HomeController extends Controller
 
         // START: Transaction & Revenue Charts
         $now = CarbonImmutable::createFromDate($year, $month);
-        // dd($now);
+
         if (request()->get('period') == 'monthly') {
-            $comparison = $now->subYear();
-            $periods = CarbonPeriod::create($comparison, '1 month', $now);
+            $comparison = CarbonImmutable::createFromDate($year_from, $month_from);
+            $periods = CarbonPeriod::create($comparison, '1 month', $now->addMonth());
 
             foreach ($periods as $date) {
                 $period[] = [
@@ -93,6 +96,7 @@ class HomeController extends Controller
                     'month'  => $date->format('m'),
                 ];
             }
+            // dd($period);
         } else {
             $comparison = $now->startOfMonth();
             $period = CarbonPeriod::create($comparison, $now);
@@ -161,7 +165,7 @@ class HomeController extends Controller
 
         $data['productsBarChart'] = new ProductsBarChart;
         $data['productsBarChart']->labels($bestSellerLabels);
-        $data['productsBarChart']->dataset('Jumlah produk terjual', 'bar', $bestSellerDataset)
+        $data['productsBarChart']->dataset('Jumlah produk terjual ' . $this->months[$month] . ' ' . $year, 'bar', $bestSellerDataset)
             ->color('#B388FF')
             ->backgroundColor('#D1C4E9')
             ->lineTension(0);
@@ -175,8 +179,11 @@ class HomeController extends Controller
             'setting' => Setting::all()->keyBy('key'),
             'month_today' => $month,
             'year_today' => $year,
+            'month_from' => $month_from,
+            'year_from' => $year_from,
             'months' => $this->months,
-            'bestsellers' => $bestsellers
+            'bestsellers' => $bestsellers,
+            'period' => $period
         ]);
     }
 }

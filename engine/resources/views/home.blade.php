@@ -176,7 +176,7 @@
                 </div>
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Detail Produk Perlu di-<i>Restock</i></h5>
@@ -190,7 +190,8 @@
                                     <th>Produk</th>
                                     <th>Qty</th>
                                     <th>Safety</th>
-                                    <th>Hold Qty</th>
+                                    <th>Hold</th>
+                                    <th>Rekomendasi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -213,6 +214,15 @@
                                         <td class="align-middle {{ $restock->qty < $restock->qty_hold ? 'text-danger' : '' }}">
                                             <strong>{{ $restock->qty_hold }} pcs</strong>
                                         </td>
+                                        <td class="align-middle">
+                                            @if($restock->qty <= $restock->safety)
+                                                Restock produk ini sebanyak >{{ $restock->safety - $restock->qty }} pcs
+                                            @endif
+                                            <br>
+                                            @if($restock->qty < $restock->qty_hold)
+                                                Restock produk ini sebanyak >{{ $restock->qty_hold }} pcs
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -234,8 +244,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
-                            <h6 class="card-title text-atalla">Produk Terlaris</h6>
-                            <a href="#" data-toggle="modal" data-target="#bestseller">Details</a>
+                            <h6 class="card-title text-atalla">Produk Terlaris ({{ $months[$month_today] }} {{ $year_today }})</h6>
+                            <a href="#" data-toggle="modal" data-target="#bestseller">Lihat Detail</a>
                         </div>
                         <div class="w-100 pt-1">
                             {!! $data['productsBarChart']->container() !!}
@@ -258,11 +268,12 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="bestseller" tabindex="-1" role="dialog" aria-labelledby="bestsellerLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="bestsellerLabel">Detail Produk Terlaris</h5>
+                <h5 class="modal-title" id="bestsellerLabel">Detail Produk Terlaris ({{ $months[$month_today] }} {{ $year_today }})</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -291,7 +302,7 @@
                                 <strong>{{ $bestseller['qty'] }} pcs</strong>
                             </td>
                             <td class="align-middle">
-                                <a href="{{ url('products/'.$bestseller['stock']->product->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ url('products/'.$bestseller['stock']->product->id.'?edit='. $bestseller['stock']->color) }}" class="text-atalla">
                                     Edit Safety Stock
                                 </a>
                             </td>

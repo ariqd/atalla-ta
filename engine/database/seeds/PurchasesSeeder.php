@@ -11,7 +11,7 @@ class PurchasesSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Purchase::class, 50)->create()->each(function ($purchase) {
+        factory(App\Purchase::class, 30)->create()->each(function ($purchase) {
             $details = factory(\App\Purchase_detail::class, 3)->make();
 
             foreach ($details as $detail) {

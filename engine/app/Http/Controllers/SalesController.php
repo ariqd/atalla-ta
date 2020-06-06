@@ -114,6 +114,12 @@ class SalesController extends Controller
                             }
                         }
 
+                        $stock->qty -= $quantity;
+
+                        $stock->keep += $quantity;
+
+                        $stock->save();
+
                         Purchase_detail::create([
                             'purchase_id' => $purchase->id,
                             'inventory_id' => $stock->id,
@@ -196,7 +202,8 @@ class SalesController extends Controller
 
         foreach ($sale->details as $detail) {
             $stock = Stock::find($detail->inventory_id);
-            $stock->qty -= $detail->qty;
+            // $stock->qty -= $detail->qty;
+            $stock->keep -= $detail->qty;
 
             if ($stock->qty < 0) {
                 $hold = abs($stock->qty - 0);
@@ -237,7 +244,30 @@ class SalesController extends Controller
     public function makeCancel($id)
     {
         $sale = Purchase::find($id);
+
         $sale->status = 'CANCEL';
+
+        foreach ($sale->details as $detail) {
+            $stock = Stock::find($detail->inventory_id);
+
+            $stock->qty += $detail->qty;
+            $stock->keep -= $detail->qty;
+
+            // if ($stock->qty < 0) {
+            //     $hold = abs($stock->qty - 0);
+
+            //     $stock->qty_hold += $hold;
+
+            //     $stock->qty = 0;
+
+            //     $detail->status = 'HOLD';
+
+            //     $detail->save();
+            // }
+
+            $stock->save();
+        }
+
         $sale->save();
 
         return redirect()->back()->with('info', 'Status Nota penjualan berhasil diubah!');

@@ -12,7 +12,7 @@ $factory->define(Purchase::class, function (Faker $faker) {
 
     $courier = $faker->randomElement(['jne', 'pos', 'tiki']);
 
-    // $status = $faker->randomElement(['BELUM LUNAS', 'LUNAS', 'DIKIRIM', 'FINISH', 'CANCEL']);
+    $status = $faker->randomElement(['BELUM LUNAS', 'LUNAS', 'DIKIRIM', 'FINISH', 'CANCEL']);
 
     $postFields = [
         'origin' => 22, // Kota Bandung
@@ -27,7 +27,7 @@ $factory->define(Purchase::class, function (Faker $faker) {
 
     $service = $faker->randomElement($cost->rajaongkir->results[0]->costs);
 
-    $date = $faker->dateTimeBetween($startDate = 'now', $endDate = '+1 month', $timezone = null);
+    $date = $faker->dateTimeBetween($startDate = 'now', $endDate = '+1 week', $timezone = null);
 
     return [
         'customer_id' => $customer->id,
@@ -37,8 +37,8 @@ $factory->define(Purchase::class, function (Faker $faker) {
         'courier_service_name' => $service ? $service->service : '-',
         'courier_fee' => $service ?  $service->cost[0]->value : 0,
         'discount' => $customer->status == 'Agen' ? 30 : 40,
-        // 'status' => $status,
-        'status' => 'FINISH',
+        'status' => $status,
+        // 'status' => 'FINISH',
         'weight' => 1,
         'total' => 0,
         'created_at' => $date,

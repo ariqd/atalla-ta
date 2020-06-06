@@ -465,9 +465,9 @@
                                                             @else
                                                                 <span class="text-right">
                                                                     <strong>{{ $detail->qty }} pcs</strong>
-                                                                    @if(@$sale->status == 'BELUM LUNAS')
+                                                                    {{-- @if(@$sale->status == 'BELUM LUNAS')
                                                                         <p class="{{ $detail->stock->qty <= $detail->qty ? 'text-danger' : 'text-success' }}">Available: {{ $detail->stock->qty }} pcs</p>
-                                                                    @endif
+                                                                    @endif --}}
                                                                 </span>
                                                             @endif
                                                         </td>

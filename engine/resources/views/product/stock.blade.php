@@ -7,6 +7,36 @@
             background-color: #EDE7F6;
         }
 
+        #red {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: red;
+            display: inline-block;
+        }
+
+        #orange {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: orange;
+            display: inline-block;
+        }
+
+        #green {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: green;
+            display: inline-block;
+        }
+
     </style>
     {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" /> --}}
 @endpush
@@ -25,9 +55,22 @@
 
 @section('content')
 <div class="tb-content tb-style1">
-    <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2">
-        <h2 class="tb-uikits-title">Stok {{ $product->code }} {{ $product->name }}</h2>
-        <a href="{{ url('products') }}" class="btn btn-secondary btn-sm">Kembali</a>
+    <div class="tb-padd-lr-30 tb-uikits-heading mb-3 mt-2 justify-content-between">
+        <div class="d-flex align-items-center">
+            <h2 class="tb-uikits-title">Stok {{ $product->code }} {{ $product->name }}</h2>
+            <a href="{{ url('products') }}" class="btn btn-secondary btn-sm">Kembali</a>
+        </div>
+        <div class="d-flex">
+            <div class="ml-3">
+                <div id="green"></div> Stok Aman
+            </div>
+            <div class="ml-3">
+                <div id="orange"></div> Stok dibawah Safety
+            </div>
+            <div class="ml-3">
+                <div id="red"></div> Stok dibawah Hold
+            </div>
+        </div>
     </div>
     <div class="container-fluid">
         @include('layouts.feedback')
@@ -43,7 +86,7 @@
                 @forelse($colors as $color)
                     <div class="card mb-3">
                         <div class="card-body">
-                            <div class="row align-items-center">
+                            <div class="form-row align-items-center">
                                 <div class="col-2">
                                     <h5>{{ $color['color'] }}</h5>
                                     <a href="{{ url('products/'.$product->id.'?edit='.$color['color']) }}" class="text-info">Edit</a>
@@ -58,22 +101,32 @@
                                         $qty_hold = $product->stocks()->where([
                                         'color' => $color,
                                         'size' => $size
-                                        ])->first()->qty_hold;                                        
+                                        ])->first()->qty_hold;
 
                                         $safety = $product->stocks()->where([
                                         'color' => $color,
                                         'size' => $size
                                         ])->first()->safety;
+
+                                        $keep = $product->stocks()->where([
+                                        'color' => $color,
+                                        'size' => $size
+                                        ])->first()->keep;
                                     @endphp
                                     <div class="col-2 text-center">
                                         <div>
-                                            <h5 class="{{ $qty < $qty_hold ? 'text-danger' : ($qty <= $safety ? 'text-warning' : '') }}">
-                                                {{ $size }}
-                                            </h5>
+                                            <h4>
+                                                <span class="{{ $qty < $qty_hold ? 'badge badge-danger' : ($qty <= $safety ? 'badge badge-warning' : '') }}">
+                                                    {{ $size }}
+                                                </span>
+                                            </h4>
+
                                             <p class="mb-0">
-                                                <span title="Qty" class="{{ $qty < $qty_hold ? 'text-danger' : ($qty <= $safety ? 'text-warning' : 'text-success') }}">{{ $qty }}</span> 
+                                                <small>Qty | Safety | Hold | Keep</small> <br>
+                                                <span title="Qty" class="{{ $qty < $qty_hold ? 'text-danger' : ($qty <= $safety ? 'text-warning' : 'text-success') }}">{{ $qty }}</span>
                                                 | <span title="Safety Stock">{{ $safety }}</span>
                                                 | <span title="Hold Qty">{{ $qty_hold }}</span>
+                                                | <span title="Keep Qty">{{ $keep }}</span>
                                             </p>
                                         </div>
                                     </div>
