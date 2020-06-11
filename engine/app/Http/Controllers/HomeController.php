@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Charts\ProductsBarChart;
 use App\Stock;
 use App\Purchase;
-use Carbon\Carbon;
 use App\Charts\TransactionsChart;
 use App\Purchase_detail;
 use App\Setting;
@@ -96,7 +95,6 @@ class HomeController extends Controller
                     'month'  => $date->format('m'),
                 ];
             }
-            // dd($period);
         } else {
             $comparison = $now->startOfMonth();
             $period = CarbonPeriod::create($comparison, $now);
@@ -169,8 +167,6 @@ class HomeController extends Controller
             ->color('#B388FF')
             ->backgroundColor('#D1C4E9')
             ->lineTension(0);
-
-        // dd($bestsellers);
 
         return view('home', [
             'data' => $data,

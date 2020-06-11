@@ -48,26 +48,6 @@ class StocksController extends Controller
             ]);
         }
 
-        // $check = Stock::where([
-        //     'product_id' => $data['product_id'],
-        //     'size' => $data['size'],
-        //     'color' => $data['color'],
-        // ])->first();
-
-        // if (!$check) {
-        //     Validator::make($data, [
-        //         'product_id' => ['required'],
-        //         'size' => ['required'],
-        //         'color' => ['required'],
-        //         'qty' => ['required'],
-        //     ])->validate();
-
-        //     Stock::create($data);
-        // } else {
-        //     $check->qty += $data['qty'];
-        //     $check->save();
-        // }
-
         return redirect()->back()->with('info', 'Stok Produk baru berhasil ditambahkan!');
     }
 

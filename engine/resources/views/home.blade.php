@@ -36,6 +36,16 @@
             display: inline-block;
         }
 
+        #orange {
+            width: 10px;
+            height: 10px;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            background: orange;
+            display: inline-block;
+        }
+
     </style>
 @endpush
 
@@ -130,7 +140,6 @@
                                     </span> / Rp {{ number_format($setting['target_revenue']->value, 0, ',', '.') }}
                                 </h5>
                                 <div class="tb-height-b25 tb-height-lg-b25"></div>
-                                <hr />
                             </div>
                         </div>
                     </div>
@@ -179,7 +188,15 @@
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Detail Produk Perlu di-<i>Restock</i></h5>
+                            <h5 class="modal-title" id="exampleModalLabel">
+                                Detail Produk Perlu di-<i>Restock</i> 
+                            </h5>
+                            <div class="ml-3">
+                                <div id="orange"></div> Stok Qty kurang dari safety
+                            </div>
+                            <div class="ml-3">
+                                <div id="red"></div> Stok Qty kurang dari hold
+                            </div>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -216,11 +233,11 @@
                                         </td>
                                         <td class="align-middle">
                                             @if($restock->qty <= $restock->safety)
-                                                Restock produk ini sebanyak >{{ $restock->safety - $restock->qty }} pcs
+                                                <span class="text-warning">Restock produk ini sebanyak >{{ $restock->safety - $restock->qty }} pcs</span>
                                             @endif
                                             <br>
                                             @if($restock->qty < $restock->qty_hold)
-                                                Restock produk ini sebanyak >{{ $restock->qty_hold }} pcs
+                                                <span class="text-danger">Restock produk ini sebanyak >{{ $restock->qty_hold }} pcs</span>
                                             @endif
                                         </td>
                                     </tr>
